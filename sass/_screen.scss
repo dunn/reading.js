@@ -6,14 +6,15 @@
 body {
   margin: 0 25%;
   font-family: "PT Sans";
-  & > h1,
-  & > h2,
-  & > h3,
-  & > h4,
-  & > h5,
-  & > h6 {
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   cursor: pointer;
-  }
 }
 
 .js-infobox {
@@ -26,60 +27,18 @@ body {
   }
 }
 
-.hidden {
-  display: none;
-  visibility: hidden;
-}
-
-button {
-  @include border-radius(4px);
-  vertical-align: middle;
-  border-style: solid;
-  border-width: 1px;
-  font-size: 87.5%;
-}
-
-hr {
-  height: .125em;
-  width: 75%;
-  border: 0;
-}
 /* SOLARIZED THEMES */
 /* Copyright (c) 2011 Ethan Schoonover */
 /* Released under the MIT license and available at */
 /* http://ethanschoonover.com/solarized */
-.active {
-  @include border-radius(5px);
-  padding: .125em .25em;
-}
-
 .dark {
   background-color: $base03;
   color: $base0;
   .active {
     background-color: $base02;
-    button {
-      background-color: $base03;
-      border-color: $base03;
-    }
   }
   .collapsed {
     color: $base01;
-  }
-  a {
-    color: $base1;
-    &:visited {
-      color: $base01;
-    }
-  }
-  button {
-    background-color: $base02;
-    border-color: $base02;
-    color: $base0;
-  }
-  hr {
-    background-color: $base0;
-    color: $base0;
   }
 }
 
@@ -88,28 +47,9 @@ hr {
   color: $base00;
   .active {
     background-color: $base2;
-    button {
-      background-color: $base3;
-      border-color: $base3;
-    }
   }
   .collapsed {
     color: $base1;
-  }
-  a {
-    color: $base01;
-    &:visited {
-      color: $base1;
-    }
-  }
-  button {
-    background-color: $base2;
-    border-color: $base2;
-    color: $base00;
-  }
-  hr {
-    background-color: $base00;
-    color: $base00;
   }
 }
 

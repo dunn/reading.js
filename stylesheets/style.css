@@ -1,1 +1,411 @@
-@import url(http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic);/* normalize.css v2.0.1 | MIT License | git.io/normalize */article,aside,details,figcaption,figure,footer,header,hgroup,nav,section,summary{display:block}audio,canvas,video{display:inline-block}audio:not([controls]){display:none;height:0}[hidden]{display:none}html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}body{margin:0}a:focus{outline:thin dotted}a:active,a:hover{outline:0}h1{font-size:2em}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:bold}dfn{font-style:italic}mark{background:#ff0;color:#000}code,kbd,pre,samp{font-family:monospace, serif;font-size:1em}pre{white-space:pre;white-space:pre-wrap;word-wrap:break-word}q{quotes:"\201C" "\201D" "\2018" "\2019"}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-0.5em}sub{bottom:-0.25em}img{border:0}svg:not(:root){overflow:hidden}figure{margin:0}fieldset{border:1px solid #c0c0c0;margin:0 2px;padding:0.35em 0.625em 0.75em}legend{border:0;padding:0}button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}button,input{line-height:normal}button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}button[disabled],input[disabled]{cursor:default}input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}textarea{overflow:auto;vertical-align:top}table{border-collapse:collapse;border-spacing:0}@media screen{body{margin:0 25%;font-family:"PT Sans"}body>h1,body>h2,body>h3,body>h4,body>h5,body>h6{cursor:pointer}.js-infobox{position:fixed;left:1em;top:0;width:12em}.js-infobox h3{cursor:text}.hidden{display:none;visibility:hidden}button{-webkit-border-radius:4px;-moz-border-radius:4px;-ms-border-radius:4px;-o-border-radius:4px;border-radius:4px;vertical-align:middle;border-style:solid;border-width:1px;font-size:87.5%}hr{height:.125em;width:75%;border:0}.active{-webkit-border-radius:5px;-moz-border-radius:5px;-ms-border-radius:5px;-o-border-radius:5px;border-radius:5px;padding:.125em .25em}.dark{background-color:#002b36;color:#839496}.dark .active{background-color:#073642}.dark .active button{background-color:#002b36;border-color:#002b36}.dark .collapsed{color:#586e75}.dark a{color:#93a1a1}.dark a:visited{color:#586e75}.dark button{background-color:#073642;border-color:#073642;color:#839496}.dark hr{background-color:#839496;color:#839496}.light{background-color:#fdf6e3;color:#657b83}.light .active{background-color:#eee8d5}.light .active button{background-color:#fdf6e3;border-color:#fdf6e3}.light .collapsed{color:#93a1a1}.light a{color:#586e75}.light a:visited{color:#93a1a1}.light button{background-color:#eee8d5;border-color:#eee8d5;color:#657b83}.light hr{background-color:#657b83;color:#657b83}}@media screen and (max-width: 58em){body{margin:0 15%}.js-infobox{position:absolute;left:-999em;top:-999px}}@media screen and (max-width: 40em){body{margin:0 5%}}
+@import url(http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic);
+/* stylesheet for baruffio.com
+/* written by Alex Dunn in 2012
+/* and made with SASS
+/* original .scss file at
+/* ../sass/style.scss
+
+/* this stylesheet may be used for any purpose whatever */
+/* Google Web Fonts */
+/* variables and mixins */
+/* normalize.css 2012-07-07T09:50 UTC - http://github.com/necolas/normalize.css */
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+/*
+ * Corrects `block` display not defined in IE6/7/8/9 & FF3.
+ */
+/* line 21, ../sass/_normalize.scss */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section,
+summary {
+  display: block;
+}
+
+/*
+ * Addresses styling for `hidden` attribute not present in IE7/8/9, FF3, S4.
+ * Known issue: no IE6 support.
+ */
+/* line 30, ../sass/_normalize.scss */
+[hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+/*
+ * 1. Corrects text resizing oddly in IE6/7 when body `font-size` is set using
+ *    `em` units.
+ * 2. Prevents iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+/* line 45, ../sass/_normalize.scss */
+html {
+  font-size: 100%;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -ms-text-size-adjust: 100%;
+  /* 2 */
+}
+
+/*
+ * Addresses `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+/* line 60, ../sass/_normalize.scss */
+html,
+button,
+input,
+select,
+textarea {
+  font-family: sans-serif;
+}
+
+/*
+ * Addresses margins handled incorrectly in IE6/7.
+ */
+/* line 68, ../sass/_normalize.scss */
+body {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+/*
+ * Addresses `outline` inconsistency between Chrome and other browsers.
+ */
+/* line 80, ../sass/_normalize.scss */
+a:focus {
+  outline: thin dotted;
+}
+
+/*
+ * Improves readability when focused and also mouse hovered in all browsers.
+ * people.opera.com/patrickl/experiments/keyboard/test
+ */
+/* line 90, ../sass/_normalize.scss */
+a:active,
+a:hover {
+  outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+/*
+ * Addresses font sizes and margins set differently in IE6/7.
+ * Addresses font sizes within `section` and `article` in FF4+, Chrome, S5.
+ */
+/* line 103, ../sass/_normalize.scss */
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/* line 108, ../sass/_normalize.scss */
+h2 {
+  font-size: 1.5em;
+  margin: 0.83em 0;
+}
+
+/* line 113, ../sass/_normalize.scss */
+h3 {
+  font-size: 1.17em;
+  margin: 1em 0;
+}
+
+/* line 118, ../sass/_normalize.scss */
+h4 {
+  font-size: 1em;
+  margin: 1.33em 0;
+}
+
+/* line 123, ../sass/_normalize.scss */
+h5 {
+  font-size: 0.83em;
+  margin: 1.67em 0;
+}
+
+/* line 128, ../sass/_normalize.scss */
+h6 {
+  font-size: 0.75em;
+  margin: 2.33em 0;
+}
+
+/*
+ * Addresses styling not present in IE7/8/9, S5, Chrome.
+ */
+/* line 137, ../sass/_normalize.scss */
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+/*
+ * Addresses style set to `bolder` in FF3+, S4/5, Chrome.
+ */
+/* line 146, ../sass/_normalize.scss */
+b,
+strong {
+  font-weight: bold;
+}
+
+/* line 150, ../sass/_normalize.scss */
+blockquote {
+  margin: 1em 40px;
+}
+
+/*
+ * Addresses styling not present in S5, Chrome.
+ */
+/* line 158, ../sass/_normalize.scss */
+dfn {
+  font-style: italic;
+}
+
+/*
+ * Addresses styling not present in IE6/7/8/9.
+ */
+/* line 166, ../sass/_normalize.scss */
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+/*
+ * Addresses margins set differently in IE6/7.
+ */
+/* line 176, ../sass/_normalize.scss */
+p,
+pre {
+  margin: 1em 0;
+}
+
+/*
+ * Corrects font family set oddly in IE6, S4/5, Chrome.
+ * en.wikipedia.org/wiki/User:Davidgothberg/Test59
+ */
+/* line 188, ../sass/_normalize.scss */
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  _font-family: 'courier new', monospace;
+  font-size: 1em;
+}
+
+/*
+ * Improves readability of pre-formatted text in all browsers.
+ */
+/* line 198, ../sass/_normalize.scss */
+pre {
+  white-space: pre;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* line 204, ../sass/_normalize.scss */
+small {
+  font-size: 75%;
+}
+
+/*
+ * Prevents `sub` and `sup` affecting `line-height` in all browsers.
+ * gist.github.com/413930
+ */
+/* line 214, ../sass/_normalize.scss */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+/* line 221, ../sass/_normalize.scss */
+sup {
+  top: -0.5em;
+}
+
+/* line 225, ../sass/_normalize.scss */
+sub {
+  bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+/*
+ * Addresses margins set differently in IE6/7.
+ */
+/* line 240, ../sass/_normalize.scss */
+dl,
+menu,
+ol,
+ul {
+  margin: 1em 0;
+}
+
+/* line 244, ../sass/_normalize.scss */
+dd {
+  margin: 0 0 0 40px;
+}
+
+/*
+ * Addresses paddings set differently in IE6/7.
+ */
+/* line 254, ../sass/_normalize.scss */
+menu,
+ol,
+ul {
+  padding: 0 0 0 40px;
+}
+
+/*
+ * Corrects list images handled incorrectly in IE7.
+ */
+/* line 263, ../sass/_normalize.scss */
+nav ul,
+nav ol {
+  list-style: none;
+  list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+/*
+ * 1. Removes border when inside `a` element in IE6/7/8/9, FF3.
+ * 2. Improves image quality when scaled in IE7.
+ *    code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/
+ */
+/* line 278, ../sass/_normalize.scss */
+img {
+  border: 0;
+  /* 1 */
+  -ms-interpolation-mode: bicubic;
+  /* 2 */
+}
+
+/*
+ * Corrects overflow displayed oddly in IE9.
+ */
+/* line 287, ../sass/_normalize.scss */
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+/*
+ * Addresses margin not present in IE6/7/8/9, S5, O11.
+ */
+/* line 299, ../sass/_normalize.scss */
+figure {
+  margin: 0;
+}
+
+/* ============================================ */
+/* BEGIN SITE-SPECIFIC STYLES HERE
+/* ============================================ */
+/* ================================ */
+/* GLOBAL STYLES
+/* ================================ */
+@media screen {
+  /* line 6, ../sass/_screen.scss */
+  body {
+    margin: 0 25%;
+    font-family: "PT Sans";
+  }
+
+  /* line 16, ../sass/_screen.scss */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    cursor: pointer;
+  }
+
+  /* line 20, ../sass/_screen.scss */
+  .infobox {
+    position: fixed;
+    left: 1em;
+    top: 0;
+    width: 12em;
+  }
+  /* line 25, ../sass/_screen.scss */
+  .infobox h3 {
+    cursor: text;
+  }
+
+  /* SOLARIZED THEMES */
+  /* Copyright (c) 2011 Ethan Schoonover */
+  /* Released under the MIT license and available at */
+  /* http://ethanschoonover.com/solarized */
+  /* line 34, ../sass/_screen.scss */
+  .dark {
+    background-color: #002b36;
+    color: #839496;
+  }
+  /* line 37, ../sass/_screen.scss */
+  .dark .active {
+    background-color: #073642;
+  }
+  /* line 40, ../sass/_screen.scss */
+  .dark .hidden {
+    color: #586e75;
+  }
+
+  /* line 45, ../sass/_screen.scss */
+  .light {
+    background-color: #fdf6e3;
+    color: #657b83;
+  }
+  /* line 48, ../sass/_screen.scss */
+  .light .active {
+    background-color: #eee8d5;
+  }
+  /* line 51, ../sass/_screen.scss */
+  .light .hidden {
+    color: #93a1a1;
+  }
+
+  /* end @media only screen */
+}
+@media screen and (max-width: 58em) {
+  /* line 61, ../sass/_screen.scss */
+  body {
+    margin: 0 15%;
+  }
+
+  /* get rid of the infobox on small displays */
+  /* line 65, ../sass/_screen.scss */
+  .infobox {
+    position: absolute;
+    left: -999em;
+    top: -999px;
+  }
+}
+@media screen and (max-width: 40em) {
+  /* line 73, ../sass/_screen.scss */
+  body {
+    margin: 0 5%;
+  }
+}
+/* ============================================ */
+/* END SITE-SPECIFIC STYLES
+/* ============================================ */
