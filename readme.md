@@ -1,7 +1,10 @@
-# reading.js
+# Reading.js
 
 This project is an attempt to make it easier to read
 documents---particularly long ones---online.
+[Here's an example of reading.js in action](http://baruffio.com/docs/modernphilosophy.html).
+
+## Features
 
 The two primary components are the `reading.js` script and the
 `reading.css` stylesheet.  When these two are included in a
@@ -32,7 +35,8 @@ document:
 <script type="text/javascript" src="http://baruffio.com/read/js/scripts.js"></script>
 ```
 
-I haven't tested any other `.css` file alongside `reading.css`.
+I haven't tested any other `.css` file alongside `reading.css`, so be
+careful when mixing stylesheets.
 
 ## What do you mean by "well-structured HTML"?
 
