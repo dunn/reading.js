@@ -8,7 +8,7 @@ documents---particularly long ones---online.
 
 The two primary components are the `reading.js` script and the
 `reading.css` stylesheet.  When these two are included in a
-well-structured HTML file, they add a lot of cool functionality:
+well-structured HTML file, they add some neat functionality:
 
 - **Keyboard shortcuts:** Navigate the document without using your
     mouse.
