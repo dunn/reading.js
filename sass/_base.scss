@@ -1,0 +1,78 @@
+@import "compass";
+
+// ============================
+// SASS VARIABLES
+// ============================
+// SOLARIZED COLORS
+// Copyright (c) 2011 Ethan Schoonover */
+// Released under the MIT license and available at */
+// http://ethanschoonover.com/solarized */
+$base03:    #002b36;
+$base02:    #073642;
+$base01:    #586e75;
+$base00:    #657b83;
+$base0:     #839496;
+$base1:     #93a1a1;
+$base2:     #eee8d5;
+$base3:     #fdf6e3;
+// ==============
+// DIMENSIONS
+// ==============
+$box-border: .2em;
+//
+$break1-width: 58em;
+$break2-width: 40em;
+
+// mixin to adjust widths relative to media
+@mixin width($w-set, $w-break1, $w-break2) {
+  @if ($w-set != 0) {
+    width: $w-set;
+  }
+  @else {
+    width: auto;
+  }
+  @if ($w-break1 != 1) and ($w-break1 != $w-set) {
+    @if ($w-break1 == 0) {
+      @media screen and (max-width: $break1-width) {
+	width: auto;
+      }
+    }
+    @else if ($w-break1 > 1) {
+      @media screen and (max-width: $break1-width) {
+	width: $w-break1;
+      }
+    }
+    @else if ($w-break1 < 1) {
+      @media screen and (max-width: $break1-width) {
+	width: ($w-set) * $w-break1;
+      }
+    }
+    @else if ($w-break1 < 1) {
+      @media screen and (max-width: $break1-width) {
+	width: ($base-width) * $w-break1;
+      }
+    }
+  }
+  @if ($w-break2 != 1) and ($w-break2 != $w-set) {
+    @if ($w-break2 == 0) {
+      @media screen and (max-width: $break2-width) {
+	width: auto;
+      }
+    }
+    @else if ($w-break2 > 1) {
+      @media screen and (max-width: $break2-width) {
+	width: $w-break2;
+      }
+    }
+    @else if ($w-break2 < 1) {
+      @media screen and (max-width: $break2-width) {
+	width: ($w-set) * $w-break2;
+      }
+    }
+    @else if ($w-break2 < 1) {
+      @media screen and (max-width: $break2-width) {
+	width: ($base-width) * $w-break2;
+      }
+    }
+  }
+}
