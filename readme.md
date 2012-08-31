@@ -25,15 +25,17 @@ well-structured HTML file, they add some neat functionality:
     
 ## Using reading.js
 
-Feel free to download and modify this project to your heart's
-content.  If you just want to plug the files into your own document,
-though, simply add these two lines to the `<head>` of your HTML
-document:
+Feel free to download and modify this project to your heart's content.
+If you just want to use the files with your own document, though,
+simply add these two lines to the `<head>` of your HTML document:
 
 ```html
 <link rel="stylesheet" href="http://baruffio.com/read/stylesheets/style.css">
 <script type="text/javascript" src="http://baruffio.com/read/js/scripts.js"></script>
 ```
+
+The above will include compressed versions of `reading.js` and
+`reading.css` in your document.
 
 I haven't tested any other `.css` file alongside `reading.css`, so be
 careful when mixing stylesheets.
