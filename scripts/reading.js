@@ -54,6 +54,9 @@ elements = document.body.children;
 // populate the headers array (without the infobox):
 headers = getElements(headerList, false);
 
+// all the headers start out visible:
+visible = headers;
+
 for ( var i = 0; i < headers.length; i++ ) {
     // append some cute buttons:
     var content = headers[i].innerHTML;
@@ -96,13 +99,8 @@ window.onkeypress=function(key) {
 key = key || window.event;
 var theKey = key.which || key.keyCode;
 
-    // populate the visible array if we haven't already:
-    if ( visible.length === 0 ) {
-        visible = getElements(headerList, true);
-    }
-
     // if they hit [return], toggle the active section:
-    else if ( theKey === 13 ) {
+    if ( theKey === 13 ) {
         toggleHandler( whoIsActive() );
     }
     // if they press "a", collapse all headers at the same level as
