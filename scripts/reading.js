@@ -28,7 +28,7 @@ var headerLinks = " <button class='this' title='Collapse this section'>" + iconT
 // keyCode/charCode variables
 var keyNext = 106;
 var keyPrev = 107;
-var keyNextUp = 108;
+var keyNextUp = 111;
 var keyPrevUp = 105;
 var keyFirst = 117;
 var keyLast = 109;
@@ -37,7 +37,7 @@ var keyExpand = 102;
 var keyTheme = 115;
 
 // gets inserted at the top of the document
-var helpBoxText = "<h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section up</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section up</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul>";
+var helpBoxText = "<h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section (one level up)</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section (one level up)</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul>";
 
 /////////////////
 // SETUP FUNCTION
