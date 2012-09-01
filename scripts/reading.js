@@ -67,8 +67,8 @@ for ( var i = 0; i < headers.length; i++ ) {
     headers[i].onclick=toggleHandler;
 }
 
-// make the first header active
-makeActive(headers[0]);
+// make the first header active, but don't scroll to it
+headers[0].classList.add("active");
 
 ///////////
 // NOW add the help box at the top:
