@@ -46,7 +46,7 @@ window.onload=function() {
 "use strict";
 
 // default to the light Solarized theme
-document.documentElement.classList.add("light");
+document.documentElement.classList.add("dark");
 
 // populate the elements array (without the infobox):
 elements = document.body.children;
