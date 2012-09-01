@@ -36,8 +36,9 @@ var keyAll = 97;
 var keyExpand = 102;
 var keyTheme = 115;
 
-// gets inserted at the top of the document
-var helpBoxText = "<aside><p><a href=\"#startOfContent\" title=\"Skip to content\">Skip to content</a></p><h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section (one level up)</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section (one level up)</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul></aside>";
+// this gets set in the `onload` function and is also used in the
+// `makeActive` function:
+var url;
 
 /////////////////
 // SETUP FUNCTION
@@ -69,12 +70,44 @@ for ( var i = 0; i < headers.length; i++ ) {
 
 // make the first header active, but don't scroll to it:
 headers[0].classList.add("active");
+
 // make the first header the target of the "skip to content link" in
-// the infobox:
-headers[0].setAttribute("id", "startOfContent");
+// the infobox.  if it doesn't already have an id, give it one:
+var firstHId = headers[0].getAttribute("id");
+var startId;
+if ( firstHId === null ) {
+    headers[0].setAttribute("id", "startOfContent");
+    startId = "startOfContent";
+}
+else {
+    startId = firstHId;
+}
+
+// this is the HTML for the infobox that gets inserted at the top of
+// the document:
+var helpBoxText = "<aside><p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section (one level up)</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section (one level up)</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul></aside>";
+
+// url handling; changing the active header adds the #id of that
+// header to the window.location, and if someone navigates to the document using a #id link, activate that header:
+url = window.location.toString();
+// check if it has an ID suffix:
+var urlPound = url.indexOf("#");
+if ( urlPound !== -1 ) {
+    var urlId = url.slice(urlPound + 1);
+    // after getting the id, remove it from the global url var:
+    url = url.slice(0, urlPound);
+    // find the element with the id from the url
+    var startAt = document.getElementById(urlId);
+    var startTag = startAt.tagName;
+    // if it's a header, make it active upon loading:
+    if ( startTag === "H1" || startTag === "H2" || startTag === "H3" || startTag === "H4" || startTag === "H5" || startTag === "H6" ) {
+        clearActive(headers);
+        makeActive(startAt);
+    }
+}
 
 ///////////
-// NOW add the help box at the top:
+// NOW add the info box at the top:
 
 // first find the first element after <body>:
 var firstElement = document.body.children[0];
@@ -543,7 +576,12 @@ function getHeaderNum(who) {
 
 function makeActive(me) {
 "use strict";
+// uses global var "url"
     me.classList.add("active");
+    var id = me.getAttribute("id");
+    if ( id !== null ) {
+        window.location.replace(url + "#" + id);
+    }
     me.scrollIntoView();
 }
 
