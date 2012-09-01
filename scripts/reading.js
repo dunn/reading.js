@@ -37,7 +37,7 @@ var keyExpand = 102;
 var keyTheme = 115;
 
 // gets inserted at the top of the document
-var helpBoxText = "<h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section (one level up)</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section (one level up)</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul>";
+var helpBoxText = "<aside><p><a href=\"#startOfContent\" title=\"Skip to content\">Skip to content</a></p><h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section (one level up)</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section (one level up)</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul></aside>";
 
 /////////////////
 // SETUP FUNCTION
@@ -67,8 +67,11 @@ for ( var i = 0; i < headers.length; i++ ) {
     headers[i].onclick=toggleHandler;
 }
 
-// make the first header active, but don't scroll to it
+// make the first header active, but don't scroll to it:
 headers[0].classList.add("active");
+// make the first header the target of the "skip to content link" in
+// the infobox:
+headers[0].setAttribute("id", "startOfContent");
 
 ///////////
 // NOW add the help box at the top:
