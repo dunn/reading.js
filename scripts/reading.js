@@ -162,7 +162,7 @@ var theKey = key.which || key.keyCode;
         clearActive(visible);
         makeActive(visible[visible.length - 1]);
     }
-    // if they press "i", go to the next header that's a level up:
+    // if they press "i", go to the previous header that's a level up:
     else if ( theKey === keyPrevUp ) {
         for ( var i = 0; i < visible.length; i++ ) {
             if ( visible[i] === whoIsActive() ) {
@@ -176,7 +176,7 @@ var theKey = key.which || key.keyCode;
             }
         }
     }
-    // if they press "l" go to the previous header that's a level up:
+    // if they press "o" go to the next header that's a level up:
     else if ( theKey === keyNextUp ) {
         for ( var k = 0; k < visible.length; k++ ) {
             if ( visible[k] === whoIsActive() ) {
