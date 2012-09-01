@@ -45,7 +45,7 @@ var helpBoxText = "<aside><p><a href=\"#startOfContent\" title=\"Skip to content
 window.onload=function() {
 "use strict";
 
-// default to the light Solarized theme
+// default to the dark Solarized theme
 document.documentElement.classList.add("dark");
 
 // populate the elements array (without the infobox):
