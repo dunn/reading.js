@@ -2,7 +2,8 @@
 
 This project is an attempt to make it easier to read
 documents---particularly long ones---online.
-[Here's an example of reading.js in action](http://baruffio.com/docs/modernphilosophy.html).
+[Here's an example of reading.js in action](http://baruffio.com/modernphilosophy/text.html
+"Modern Philosophy by Walter Ott").
 
 ## Features
 
@@ -44,13 +45,13 @@ careful when mixing stylesheets.
 
 I designed reading.js to use with the HTML documents that I have
 generated with applications like
-[pandoc](http://johnmacfarlane.net/pandoc/).  Every section of text is
-preceded by a header element (`h1`, `h2`, `h3`, `h4`, `h5`, or `h6`),
-and the header elements are direct children of the `<body>` (that is,
-they are not enclosed in a `<div>` or any other element).  Reading.js
-won't work if the header elements in your document are differently
-formatted.  (If you're using pandoc, don't use the `--section-divs`
-option.)
+[pandoc](http://johnmacfarlane.net/pandoc/ "pandoc project page").
+Every section of text is preceded by a header element (`h1`, `h2`,
+`h3`, `h4`, `h5`, or `h6`), and the header elements are direct
+children of the `<body>` (that is, they are not enclosed in a `<div>`
+or any other element).  Reading.js won't work if the header elements
+in your document are differently formatted.  (If you're using pandoc,
+don't use the `--section-divs` option.)
 
 Obviously these limitations are just the result of my limitations as a
 programmer.  The `range-method` branch of this project is an older
