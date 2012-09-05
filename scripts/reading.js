@@ -173,6 +173,7 @@ var theKey = key.which || key.keyCode;
                         break;
                     }
                 }
+                break;
             }
         }
     }
@@ -187,6 +188,7 @@ var theKey = key.which || key.keyCode;
                         break;
                     }
                 }
+                break;
             }
         }
     }
