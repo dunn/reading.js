@@ -100,7 +100,7 @@ if ( urlPound !== -1 ) {
     var startAt = document.getElementById(urlId);
     var startTag = startAt.tagName;
     // if it's a header, make it active upon loading:
-    if ( startTag === "H1" || startTag === "H2" || startTag === "H3" || startTag === "H4" || startTag === "H5" || startTag === "H6" ) {
+    if ( yesHeaderTag(startTag) ) {
         clearActive(headers);
         makeActive(startAt);
     }
@@ -275,7 +275,7 @@ function toggleMe(who) {
                     // if the first element we come across is not a
                     // header element, then unhide it and increment
                     // the new counter:
-                    if ( ! ( tName === "H1" || tName === "H2" || tName === "H3" || tName === "H4" || tName === "H5" || tName === "H6" ) ) {
+                    if ( ! yesHeaderTag(tName) ) {
                         elements[r].classList.remove("hidden");
                         r++;
                     }
@@ -628,3 +628,7 @@ function isAnythingHidden(things) {
     }
 }
 
+function yesHeaderTag(tag) {
+"use strict";
+    return ( tag === "H1" || tag === "H2" || tag === "H3" || tag === "H4" || tag === "H5" || tag === "H6" );
+}
