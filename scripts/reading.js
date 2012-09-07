@@ -16,13 +16,13 @@ var elements = [];
 var headers = [];
 
 // this is just the headers visible after a collapse or expansion
+// (those that don't have `class="hidden"`)
 var visible = [];
 
 // unicode symbols for button icons
 var iconThis = "←";
 var iconAll = "↕";
 
-// http://stackoverflow.com/questions/493175/how-can-i-create-an-empty-html-anchor-so-the-page-doesnt-jump-up-when-i-click
 var headerLinks = " <button class='this' title='Collapse this section'>" + iconThis + "</button> <button class='all' title='Collapse all sections at this level'>" + iconAll + "</button>";
 
 // keyCode/charCode variables
@@ -36,8 +36,9 @@ var keyAll = 97;
 var keyExpand = 102;
 var keyTheme = 115;
 
-// this gets set in the `onload` function and is also used in the
-// `makeActive` function:
+// this gets set to the window.location (minus `#id`) in the `onload`
+// function and is also used in the `makeActive` function (we add the
+// `#id` to it):
 var url;
 
 /////////////////
@@ -88,7 +89,8 @@ else {
 var helpBoxText = "<aside><p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section (one level up)</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section (one level up)</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul></aside>";
 
 // url handling; changing the active header adds the #id of that
-// header to the window.location, and if someone navigates to the document using a #id link, activate that header:
+// header to the window.location, and if someone navigates to the
+// document using a #id link, activate that header:
 url = window.location.toString();
 // check if it has an ID suffix:
 var urlPound = url.indexOf("#");
@@ -106,12 +108,11 @@ if ( urlPound !== -1 ) {
     }
 }
 
-///////////
+///////////////////////////////////
 // NOW add the info box at the top:
 
 // first find the first element after <body>:
 var firstElement = document.body.children[0];
-
 // then make a new div
 var helpDiv = document.createElement("div");
 // and give it a class (if you change the class, make sure to change
@@ -192,10 +193,11 @@ var theKey = key.which || key.keyCode;
             }
         }
     }
-    // if they press "f", expand everything:
-    // this is a useful feature I guess, but it also has to be
+    // if they press "f", expand everything
+    // (this is a useful feature I guess, but it also has to be
     // activated before the user tries to search; hence being bound to
-    // "f".  This is more a work-around than an actual solution, obvs:
+    // "f".  This is more a work-around than an actual solution,
+    // obvs):
     else if ( theKey === keyExpand ) {
         while ( isAnythingHidden(headers) ) {
             for ( var f = 0; f < headers.length; f++ ) {
@@ -217,8 +219,8 @@ var theKey = key.which || key.keyCode;
 // TOGGLING FUNCTIONS
 /////////////////////
 
-// toggleHandler checks what's being toggled, and passes the
-// element(s) to toggleMe:
+// toggleHandler checks what's being toggled, and in turn calls
+// toggleMe or toggleSame:
 function toggleHandler(what) {
 "use strict";
     // figure out what element(s) we're toggling:
@@ -248,7 +250,10 @@ function toggleHandler(what) {
     visible = getElements(headerList, true);
 }
 
-// called by toggleHandler
+/////////////////////
+// TOGGLING FUNCTIONS
+/////////////////////
+
 function toggleMe(who) {
 "use strict";
     // get the number of the header (h1 => 1, h2 => 2, etc)
@@ -324,10 +329,6 @@ function toggleMe(who) {
 // end function
 }
 
-///////////////////////////////////////
-// CALLED BY KEYPRESS AND TOGGLEHANDLER
-///////////////////////////////////////
-
 // toggle all headers of the same level as the active:
 function toggleSame() {
 "use strict";
@@ -402,35 +403,9 @@ function toggleSame() {
     }
 }
 
-function activateSame(ref, dir, num) {
-"use strict";
-    if ( dir === "down" ) {
-        // ref.length - 1 so we can't scroll beyond the last
-        // header:
-        for ( var i = 0; i < ( ref.length - 1 ); i++ ) {
-            if ( ref[i].classList.contains("active") ) {
-                clearActive(ref);
-                makeActive(ref[i + num]);
-                // if we don't break it will loop forever
-                break;
-            }
-        }
-    }
-    else {
-        for ( var k = ref.length - 1; k > 0; k-- ) {
-            if ( ref[k].classList.contains("active") ) {
-                clearActive(ref);
-                makeActive(ref[k - num]);
-                // if we don't break it will loop forever
-                break;
-            }
-        }
-    }
-}
-
-/////////////////////
-// CALLED BY TOGGLEME
-/////////////////////
+/////////////////
+// TOGGLE SUPPORT
+/////////////////
 
 // this function is completely useless outside this script:
 function compareHeaders(counter, array, headerNum) {
@@ -502,9 +477,117 @@ function getTargets(inputs) {
     }
 }
 
-///////////////////////////
-// ARRAY-BUILDING FUNCTIONS
-///////////////////////////
+// event listener; needs to be re-added each time:
+function addToggler(where) {
+"use strict";
+    where.onclick=toggleHandler;
+}
+
+function isCollapsed(thing) {
+"use strict";
+    return thing.classList.contains("collapsed");
+}
+
+function toggleCollapse(where) {
+"use strict";
+    where.classList.toggle("collapsed");
+}
+
+function getHeaderNum(who) {
+"use strict";
+    if ( who.length === undefined ) {
+        return who.tagName.slice(1);
+    }
+    else {
+        return who[0].tagName.slice(1);
+    }
+}
+
+// just returns true if the the argument passed was a click event:
+function isClick(input) {
+"use strict";
+    if ( input.target !== undefined ) {
+        return true;
+    }
+}
+
+// what is the first (only) element that has `class="active"`?
+function whoIsActive() {
+"use strict";
+    return document.getElementsByClassName("active")[0];
+}
+
+// well, IS anything hidden?
+function isAnythingHidden(things) {
+"use strict";
+    if ( things.length === undefined ) {
+        return things.classList.contains("collapsed");
+    }
+    else {
+        var anything = 0;
+        for ( var i = 0; i < things.length; i++ ) {
+            if ( things[i].classList.contains("collapsed") ) {
+                anything++;
+            }
+        }
+        return ( anything > 0 ? true : false );
+    }
+}
+
+//////////////////////////
+// ACTIVE/SCROLL FUNCTIONS
+//////////////////////////
+
+// make active a header of the same level (up or down):
+function activateSame(ref, dir, num) {
+"use strict";
+    if ( dir === "down" ) {
+        // ref.length - 1 so we can't scroll beyond the last
+        // header:
+        for ( var i = 0; i < ( ref.length - 1 ); i++ ) {
+            if ( ref[i].classList.contains("active") ) {
+                clearActive(ref);
+                makeActive(ref[i + num]);
+                // if we don't break it will loop forever
+                break;
+            }
+        }
+    }
+    else {
+        for ( var k = ref.length - 1; k > 0; k-- ) {
+            if ( ref[k].classList.contains("active") ) {
+                clearActive(ref);
+                makeActive(ref[k - num]);
+                // if we don't break it will loop forever
+                break;
+            }
+        }
+    }
+}
+
+function makeActive(me) {
+"use strict";
+// uses global var "url"
+    me.classList.add("active");
+    var id = me.getAttribute("id");
+    if ( id !== null ) {
+        window.location.replace(url + "#" + id);
+    }
+    me.scrollIntoView();
+}
+
+function clearActive(array) {
+"use strict";
+    for ( var i = 0; i < array.length; i++ ) {
+        if ( array[i].classList.contains("active") ) {
+            array[i].classList.remove("active");
+        }
+    }
+}
+
+//////////////////
+// OTHER FUNCTIONS
+//////////////////
 
 function getElements(refArray, visibleOnly) {
 "use strict";
@@ -540,94 +623,6 @@ var matches = [];
         }
     }           
     return matches;
-}
-
-//////////////////
-// OTHER FUNCTIONS
-//////////////////
-
-// event listener; needs to be re-added each time:
-function addToggler(where) {
-"use strict";
-    where.onclick=toggleHandler;
-}
-
-// class handling functions; hopefully self-explanatory:
-
-function isCollapsed(thing) {
-"use strict";
-    return thing.classList.contains("collapsed");
-}
-
-function toggleCollapse(where) {
-"use strict";
-    where.classList.toggle("collapsed");
-}
-
-function getHeaderNum(who) {
-"use strict";
-    if ( who.length === undefined ) {
-        return who.tagName.slice(1);
-    }
-    else {
-        return who[0].tagName.slice(1);
-    }
-}
-
-// class="active" functions:
-
-function makeActive(me) {
-"use strict";
-// uses global var "url"
-    me.classList.add("active");
-    var id = me.getAttribute("id");
-    if ( id !== null ) {
-        window.location.replace(url + "#" + id);
-    }
-    me.scrollIntoView();
-}
-
-function clearActive(array) {
-"use strict";
-    for ( var i = 0; i < array.length; i++ ) {
-        if ( array[i].classList.contains("active") ) {
-            array[i].classList.remove("active");
-        }
-    }
-}
-
-// just returns true if the the argument passed was a click event:
-
-function isClick(input) {
-"use strict";
-    if ( input.target !== undefined ) {
-        return true;
-    }
-}
-
-// what is the first (only) element that has `class="active"`?
-
-function whoIsActive() {
-"use strict";
-    return document.getElementsByClassName("active")[0];
-}
-
-// well, IS anything hidden?
-
-function isAnythingHidden(things) {
-"use strict";
-    if ( things.length === undefined ) {
-        return things.classList.contains("collapsed");
-    }
-    else {
-        var anything = 0;
-        for ( var i = 0; i < things.length; i++ ) {
-            if ( things[i].classList.contains("collapsed") ) {
-                anything++;
-            }
-        }
-        return ( anything > 0 ? true : false );
-    }
 }
 
 function yesHeaderTag(tag) {
