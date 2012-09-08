@@ -223,10 +223,37 @@ var theKey = key.which || key.keyCode;
 // toggleMe or toggleSame:
 function toggleHandler(what) {
 "use strict";
-    // figure out what element(s) we're toggling:
-    var headerTarget = getTargets(what);
+    var headerTarget;
 
-    var theActive = whoIsActive();
+    // if toggleHandler was called by a keypress, then whatever function
+    // that called toggleHandler has already passed the correct element(s)
+    // to the function, so we don't need to do much:
+    if ( ! isClick(what) ) {
+        headerTarget = what;
+    }
+
+    // if something was clicked, we need to figure out what:
+    else {
+        clearActive(visible);
+        // if it was the header that was clicked, just return that
+        // element:
+        if ( yesHeaderTag(what.target.tagName) ) {
+            headerTarget = what.target;
+            headerTarget.classList.add("active");
+        }
+        // otherwise, see if it it was the "all" button:
+        else if ( what.target.classList.contains("all") ) {
+            // if so, return an array of all the headers at that level:
+            headerTarget = document.getElementsByTagName(what.target.parentElement.tagName);
+            what.target.parentElement.classList.add("active");
+        }
+        else {
+            // if it was something else clicked (the "this" button), then
+            // just return the header parent:
+            headerTarget = what.target.parentElement;
+            headerTarget.classList.add("active");
+        }
+    }
 
     // is it just one header, or an array?  If it's not an array it
     // won't have a defined length:
@@ -237,12 +264,7 @@ function toggleHandler(what) {
         toggleSame();
     }
 
-    // reset the active headers:
-    clearActive(headers);
-
-    // now scroll to the header (especially important if we're hiding
-    // or showing multiple elements, cause that moves things around
-    // like crazy); also set the header as "active":
+    var theActive = whoIsActive();
 
     makeActive(theActive);
 
@@ -322,7 +344,7 @@ function toggleMe(who) {
             addToggler(who);
             // probably don't have to break it here, but maybe it will
             // run faster if it doesn't have to go through the rest of
-            // the pasge elements:
+            // the page elements:
             break;
         }
     }
@@ -423,56 +445,10 @@ function compareHeaders(counter, array, headerNum) {
         // targetHeader.  Using '<' not '>' because smaller is bigger
         // (h1 < h6):
         else {
-            for ( var level = 0; level < headerList.length; level++ ) {
-                // if the element found is a header and is greater
-                // than or equal to the headerTarget:
-                if ( array[i].tagName === headerList[level] && (array[i].tagName.slice(1)) <= headerNum ) {
-                    // return the header match
-                    return array[i];
-                }
+            if ( yesHeaderTag(array[i].tagName) && (array[i].tagName.slice(1)) <= headerNum ) {
+                // return the header match
+                return array[i];
             }
-        }
-    }
-}
-
-// this function returns a header element or an array of headers,
-// depending on what was clicked or pressed:
-function getTargets(inputs) {
-"use strict";
-
-    // if toggleHandler was called by a keypress, then whatever function
-    // that called toggleHandler has already passed the correct element(s)
-    // to the function, so we don't need to do much:
-    if ( ! isClick(inputs) ) {
-        return inputs;
-    }
-    // if something was clicked, we need to figure out what:
-    else {
-        clearActive(headers);
-        // first we'll check if it was the actual header element:
-        var yes = 0;
-        for ( var i = 0; i < headerList.length; i++ ) {
-            if ( inputs.target.tagName === headerList[i] ) {
-                yes = 1;
-            }
-        }
-        // if it was the header that was clicked, just return that
-        // element:
-        if ( yes === 1 ) {
-            makeActive(inputs.target);
-            return inputs.target;
-        }
-        // otherwise, see if it it was the "all" button:
-        else if ( inputs.target.classList.contains("all") ) {
-            // if so, return an array of all the headers at that level:
-            makeActive(inputs.target.parentElement);
-            return document.getElementsByTagName(inputs.target.parentElement.tagName);
-        }
-        else {
-            // if it was something else clicked (the "this" button), then
-            // just return the header parent:
-            makeActive(inputs.target.parentElement);
-            return inputs.target.parentElement;
         }
     }
 }
