@@ -56,6 +56,9 @@ elements = document.body.children;
 // populate the headers array (without the infobox):
 headers = getElements(headerList, false);
 
+// make the first header active, but don't scroll to it:
+headers[0].classList.add("active");
+
 // all the headers start out visible:
 visible = headers;
 
@@ -69,9 +72,6 @@ for ( var i = 0; i < headers.length; i++ ) {
     headers[i].onclick=toggleHandler;
 }
 
-// make the first header active, but don't scroll to it:
-headers[0].classList.add("active");
-
 // make the first header the target of the "skip to content link" in
 // the infobox.  if it doesn't already have an id, give it one:
 var firstHId = headers[0].getAttribute("id");
@@ -83,10 +83,6 @@ if ( firstHId === null ) {
 else {
     startId = firstHId;
 }
-
-// this is the HTML for the infobox that gets inserted at the top of
-// the document:
-var helpBoxText = "<aside><p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section (one level up)</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section (one level up)</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul></aside>";
 
 // url handling; changing the active header adds the #id of that
 // header to the window.location, and if someone navigates to the
@@ -108,10 +104,12 @@ if ( urlPound !== -1 ) {
     }
 }
 
-///////////////////////////////////
-// NOW add the info box at the top:
+//////////////////////////////////
+// NOW add the infobox at the top:
 
-// first find the first element after <body>:
+var helpBoxText = "<aside><p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><h3>Keyboard shortcuts</h3><ul><li><b>" + String.fromCharCode(keyNext) + "</b>: Next section</li><li><b>" + String.fromCharCode(keyPrev) + "</b>: Previous section</li><li><b>return/enter</b>: Toggle active section</li><li><b>" + String.fromCharCode(keyNextUp) + "</b>: Next section (one level up)</li><li><b>" + String.fromCharCode(keyPrevUp) + "</b>: Previous section (one level up)</li><li><b>" + String.fromCharCode(keyFirst) + "</b>: First section</li><li><b>" + String.fromCharCode(keyLast) + "</b>: Last section</li><li><b>" + String.fromCharCode(keyAll) + "</b>: Toggle everything in this section</li><li><b>" + String.fromCharCode(keyExpand) + "</b>: Expand all sections (do this before you search within the document)</li><li><b>" + String.fromCharCode(keyTheme) + "</b>: Switch theme (light/dark)</li></ul></aside>";
+
+// find the first element after <body>:
 var firstElement = document.body.children[0];
 // then make a new div
 var helpDiv = document.createElement("div");
@@ -123,7 +121,7 @@ document.body.insertBefore(helpDiv, firstElement);
 // and give it some content:
 helpDiv.innerHTML=helpBoxText;
 
-// end onload
+// end onload function
 };
 
 ////////////////////
@@ -272,10 +270,6 @@ function toggleHandler(what) {
     visible = getElements(headerList, true);
 }
 
-/////////////////////
-// TOGGLING FUNCTIONS
-/////////////////////
-
 function toggleMe(who) {
 "use strict";
     // get the number of the header (h1 => 1, h2 => 2, etc)
@@ -380,7 +374,7 @@ function toggleSame() {
         for ( var b = 0; b < visible.length; b++ ) {
             if ( visible[b] === active ) {
                 // visible gets reset by toggleHandler, so we have to
-                // use subtract to keep track of how many fewer
+                // use 'subtract' to keep track of how many fewer
                 // headers there will be in the new array:
                 var subtract = 0;
                 var c = b - 1;
@@ -429,7 +423,9 @@ function toggleSame() {
 // TOGGLE SUPPORT
 /////////////////
 
-// this function is completely useless outside this script:
+// this function finds the active header, then returns the next header
+// that's at the same level or higher (i.e., if the active header is
+// h3, it will return the next h3, h2, or h1---whichever comes first):
 function compareHeaders(counter, array, headerNum) {
 "use strict";
 
@@ -482,9 +478,7 @@ function getHeaderNum(who) {
 // just returns true if the the argument passed was a click event:
 function isClick(input) {
 "use strict";
-    if ( input.target !== undefined ) {
-        return true;
-    }
+    return ( input.target !== undefined );
 }
 
 // what is the first (only) element that has `class="active"`?
