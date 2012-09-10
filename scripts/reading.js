@@ -64,8 +64,7 @@ visible = headers;
 
 for ( var i = 0; i < headers.length; i++ ) {
     // append some cute buttons:
-    var content = headers[i].innerHTML;
-    headers[i].innerHTML=content+headerLinks;
+    headers[i].innerHTML += headerLinks;
 
     // and add an event listener:
     // http://www.quirksmode.org/js/introevents.html
@@ -549,9 +548,7 @@ function makeActive(me) {
 function clearActive(array) {
 "use strict";
     for ( var i = 0; i < array.length; i++ ) {
-        if ( array[i].classList.contains("active") ) {
-            array[i].classList.remove("active");
-        }
+        array[i].classList.remove("active");
     }
 }
 
