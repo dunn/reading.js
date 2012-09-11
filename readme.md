@@ -31,8 +31,8 @@ If you just want to use the files with your own document, though,
 simply add these two lines to the `<head>` of your HTML document:
 
 ```html
-<link rel="stylesheet" href="http://baruffio.com/read/stylesheets/style.css">
-<script type="text/javascript" src="http://baruffio.com/read/js/scripts.js"></script>
+<link rel="stylesheet" href="http://baruffio.com/reading.js/stylesheets/reading.css">
+<script type="text/javascript" src="http://baruffio.com/reading.js/scripts/reading.min.js"></script>
 ```
 
 The above will include compressed versions of `reading.js` and
