@@ -12,21 +12,11 @@
 /* variables and mixins */
 @import "base";
 
-// _normalize.scss
+// Normalize.css (https://github.com/necolas/normalize.css)
 @import "normalize";
-
-/* ============================================ */
-/* BEGIN SITE-SPECIFIC STYLES HERE
-/* ============================================ */
 
 // _screen.scss
 @import "screen";
 
-/* ============================================ */
-/* END SITE-SPECIFIC STYLES
-/* ============================================ */
-
-@media print {
-
-}
+@import "print";
   

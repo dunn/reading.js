@@ -1,11 +1,7 @@
-/* ================================ */
-/* GLOBAL STYLES
-/* ================================ */
 @media screen {
 
 body {
   margin: 0 25%;
-  font-family: "PT Sans";
   & > h1,
   & > h2,
   & > h3,
@@ -112,7 +108,6 @@ hr {
     color: $base00;
   }
 }
-
 
 /* end @media only screen */
 }
