@@ -13,6 +13,7 @@ body {
 }
 
 .js-infobox {
+  font-size: 87.5%;
   position: fixed;
   left: 1em;
   top: 0;
@@ -20,6 +21,16 @@ body {
   h3 {
     cursor: text;
   }
+  li + li {
+    margin-top: 1em;
+  }
+}
+
+.key {
+  padding: 0 .25em;
+  @include border-radius(3px);
+  border: .125em solid;
+  font-weight: bold;
 }
 
 .hidden {
@@ -73,6 +84,11 @@ hr {
     border-color: $base02;
     color: $base0;
   }
+  .key {
+    color: $base03;
+    background-color: $base0;
+    border-color: $base0;
+  }
   hr {
     background-color: $base0;
     color: $base0;
@@ -102,6 +118,11 @@ hr {
     background-color: $base2;
     border-color: $base2;
     color: $base00;
+  }
+  .key {
+    color: $base3;
+    background-color: $base00;
+    border-color: $base00;
   }
   hr {
     background-color: $base00;
