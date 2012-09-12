@@ -55,6 +55,11 @@ hr {
 .active {
   @include border-radius(5px);
   padding: .125em .25em;
+}
+
+ol.active,
+ul.active {
+  padding-left: 40px;
   list-style-position: inside;
     /* lists will not render correctly in Gecko, due to an ancient bug
     /* that's yet to be fixed:
