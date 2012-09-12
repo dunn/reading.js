@@ -213,7 +213,7 @@ function toggleHandler(what) {
     
     // if something was clicked, we need to figure out what:
     else {
-        clearActive(visible);
+        clearActive(headers);
         // if it was the header that was clicked, just return that
         // element:
         if ( yesHeaderTag(what.target.tagName) ) {
@@ -248,7 +248,8 @@ function toggleHandler(what) {
     
     makeActive(theActive);
     
-    // repopulate the headers array with only the visible headers:
+    // repopulate arrays:
+    headers = getElements(true, headerList, true);
     visible = getElements(false, [ "HEADER" ], true);
 }
 
@@ -354,29 +355,29 @@ function toggleSame() {
         }
     }
     // are we toggling things other than <h1>s?
-    else {
+    else if ( yesHeaderTag(active.tagName) ) {
         toggleHandler(active);
         var activeNum = getHeaderNum(active);
-        for ( var b = 0; b < visible.length; b++ ) {
-            if ( visible[b] === active ) {
-                // visible gets reset by toggleHandler, so we have to
+        for ( var b = 0; b < headers.length; b++ ) {
+            if ( headers[b] === active ) {
+                // headers gets reset by toggleHandler, so we have to
                 // use 'subtract' to keep track of how many fewer
                 // headers there will be in the new array:
                 var subtract = 0;
                 var c = b - 1;
-                while ( getHeaderNum(visible[c]) >= activeNum ) {
-                    var curNum = getHeaderNum(visible[c]);
+                while ( getHeaderNum(headers[c]) >= activeNum ) {
+                    var curNum = getHeaderNum(headers[c]);
                     if ( isCollapsed(active) ) {
-                        if ( !isCollapsed(visible[c]) && curNum === activeNum ) {
-                            toggleHandler(visible[c]);
+                        if ( !isCollapsed(headers[c]) && curNum === activeNum ) {
+                            toggleHandler(headers[c]);
                         }
                         else {
                             subtract++;
                         }
                     }
                     else {
-                        if ( isCollapsed(visible[c]) && curNum === activeNum ) {
-                            toggleHandler(visible[c]);
+                        if ( isCollapsed(headers[c]) && curNum === activeNum ) {
+                            toggleHandler(headers[c]);
                         }
                         else {
                             subtract++;
@@ -385,16 +386,16 @@ function toggleSame() {
                     c--;
                 }
                 var d = b - subtract + 1;
-                while ( getHeaderNum(visible[d]) >= activeNum ) {
-                    var curNum2 = getHeaderNum(visible[d]);
+                while ( getHeaderNum(headers[d]) >= activeNum ) {
+                    var curNum2 = getHeaderNum(headers[d]);
                     if ( isCollapsed(active) ) {
-                        if ( !isCollapsed(visible[d]) && curNum2 === activeNum ) {
-                            toggleHandler(visible[d]);
+                        if ( !isCollapsed(headers[d]) && curNum2 === activeNum ) {
+                            toggleHandler(headers[d]);
                         }
                     }
                     else {
-                        if ( isCollapsed(visible[d]) && curNum2 === activeNum ) {
-                            toggleHandler(visible[d]);
+                        if ( isCollapsed(headers[d]) && curNum2 === activeNum ) {
+                            toggleHandler(headers[d]);
                         }
                     }
                     d++;
