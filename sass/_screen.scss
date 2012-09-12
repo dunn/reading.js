@@ -12,6 +12,20 @@ body {
   }
 }
 
+button {
+  @include border-radius(4px);
+  vertical-align: middle;
+  border-style: solid;
+  border-width: 1px;
+  font-size: 87.5%;
+}
+
+hr {
+  height: .125em;
+  width: 75%;
+  border: 0;
+}
+
 .js-infobox {
   font-size: 87.5%;
   position: fixed;
@@ -38,28 +52,19 @@ body {
   visibility: hidden;
 }
 
-button {
-  @include border-radius(4px);
-  vertical-align: middle;
-  border-style: solid;
-  border-width: 1px;
-  font-size: 87.5%;
+.active {
+  @include border-radius(5px);
+  padding: .125em .25em;
+  list-style-position: inside;
+    /* lists will not render correctly in Gecko, due to an ancient bug
+    /* that's yet to be fixed:
+    /* https://bugzilla.mozilla.org/show_bug.cgi?id=36854 */
 }
 
-hr {
-  height: .125em;
-  width: 75%;
-  border: 0;
-}
 /* SOLARIZED THEMES */
 /* Copyright (c) 2011 Ethan Schoonover */
 /* Released under the MIT license and available at */
 /* http://ethanschoonover.com/solarized */
-.active {
-  @include border-radius(5px);
-  padding: .125em .25em;
-}
-
 .dark {
   background-color: $base03;
   color: $base0;

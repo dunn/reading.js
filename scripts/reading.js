@@ -15,8 +15,8 @@ var elements = [];
 // so we don't have to cycle through every element every time
 var headers = [];
 
-// this is just the headers visible after a collapse or expansion
-// (those that don't have `class="hidden"`)
+// `visible` holds the visible elements after an expansion or collapse
+// ("visible" means it doesn't have `class="hidden"`)
 var visible = [];
 
 // unicode symbols for button icons
@@ -53,14 +53,14 @@ document.documentElement.classList.add("dark");
 // populate the elements array (without the infobox):
 elements = document.body.children;
 
-// populate the headers array (without the infobox):
-headers = getElements(headerList, false);
+// get every element except for the <header>:
+visible = getElements(false, [ "HEADER" ], true);
+
+// get the <h1>, <h2> etc headers:
+headers = getElements(true, headerList, false);
 
 // make the first header active, but don't scroll to it:
 headers[0].classList.add("active");
-
-// all the headers start out visible:
-visible = headers;
 
 for ( var i = 0; i < headers.length; i++ ) {
     // append some cute buttons:
@@ -162,33 +162,11 @@ var theKey = key.which || key.keyCode;
     }
     // if they press "i", go to the previous header that's a level up:
     else if ( theKey === keyPrevUp ) {
-        for ( var i = 0; i < visible.length; i++ ) {
-            if ( visible[i] === whoIsActive() ) {
-                for ( var j = (i-1); j >= 0; j-- ) {
-                    if ( getHeaderNum(whoIsActive()) > getHeaderNum(visible[j]) ) {
-                        clearActive(visible);
-                        makeActive(visible[j]);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
+        nextUp(false);
     }
     // if they press "o" go to the next header that's a level up:
     else if ( theKey === keyNextUp ) {
-        for ( var k = 0; k < visible.length; k++ ) {
-            if ( visible[k] === whoIsActive() ) {
-                for ( var v = (k+1); v < visible.length; v++ ) {
-                    if ( getHeaderNum(whoIsActive()) > getHeaderNum(visible[v]) ) {
-                        clearActive(visible);
-                        makeActive(visible[v]);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
+        nextUp(true);
     }
     // if they press "f", expand everything
     // (this is a useful feature I guess, but it also has to be
@@ -196,10 +174,10 @@ var theKey = key.which || key.keyCode;
     // "f".  This is more a work-around than an actual solution,
     // obvs):
     else if ( theKey === keyExpand ) {
-        while ( isAnythingHidden(headers) ) {
-            for ( var f = 0; f < headers.length; f++ ) {
-                if ( headers[f].classList.contains("collapsed") ) {
-                    toggleHandler(headers[f]);
+        while ( isAnythingHidden(visible) ) {
+            for ( var f = 0; f < visible.length; f++ ) {
+                if ( visible[f].classList.contains("collapsed") ) {
+                    toggleHandler(visible[f]);
                 }
             }
         }
@@ -210,6 +188,8 @@ var theKey = key.which || key.keyCode;
         html.classList.toggle("dark");
         html.classList.toggle("light");
     }
+
+// end keypress fn
 };
 
 /////////////////////
@@ -220,15 +200,17 @@ var theKey = key.which || key.keyCode;
 // toggleMe or toggleSame:
 function toggleHandler(what) {
 "use strict";
+
     var headerTarget;
 
-    // if toggleHandler was called by a keypress, then whatever function
-    // that called toggleHandler has already passed the correct element(s)
-    // to the function, so we don't need to do much:
+    // if toggleHandler was called by a keypress, then whatever
+    // function that called toggleHandler has already passed the
+    // correct element(s) to the function, so we don't need to do
+    // much:
     if ( ! isClick(what) ) {
         headerTarget = what;
     }
-
+    
     // if something was clicked, we need to figure out what:
     else {
         clearActive(visible);
@@ -240,21 +222,22 @@ function toggleHandler(what) {
         }
         // otherwise, see if it it was the "all" button:
         else if ( what.target.classList.contains("all") ) {
-            // if so, return an array of all the headers at that level:
+            // if so, return an array of all the headers at that
+            // level:
             headerTarget = document.getElementsByTagName(what.target.parentElement.tagName);
             what.target.parentElement.classList.add("active");
         }
         else {
-            // if it was something else clicked (the "this" button), then
-            // just return the header parent:
+            // if it was something else clicked (the "this" button),
+            // then just return the header parent:
             headerTarget = what.target.parentElement;
             headerTarget.classList.add("active");
         }
     }
-
+        
     // is it just one header, or an array?  If it's not an array it
     // won't have a defined length:
-    if ( headerTarget.length === undefined ) {
+    if ( headerTarget.length === undefined && yesHeaderTag(headerTarget.tagName) ) {
         toggleMe(headerTarget);
     }
     else {
@@ -262,23 +245,22 @@ function toggleHandler(what) {
     }
 
     var theActive = whoIsActive();
-
+    
     makeActive(theActive);
-
+    
     // repopulate the headers array with only the visible headers:
-    visible = getElements(headerList, true);
+    visible = getElements(false, [ "HEADER" ], true);
 }
 
 function toggleMe(who) {
 "use strict";
-    // get the number of the header (h1 => 1, h2 => 2, etc)
-    var headerNum = getHeaderNum(who);
-
     // first we use this `for` loop to locate ourselves in the
     // document
     for ( var i = 0; i < elements.length; i++ ) {
         // ok, we've located ourselves:
         if ( elements[i] === who ) {
+            // get the number of the header (h1 => 1, h2 => 2, etc)
+            var headerNum = getHeaderNum(who);
             // this variable holds the next header of greater or equal
             // value; it's used to determine how much stuff gets
             // expanded or collapsed
@@ -302,9 +284,9 @@ function toggleMe(who) {
                         r++;
                     }
                     else {
-                        // if the element IS a header, then, if it DOESN'T
-                        // have the "collapsed" class, unhide it and
-                        // increment the counter:
+                        // if the element IS a header, then, if it
+                        // DOESN'T have the "collapsed" class, unhide
+                        // it and increment the counter:
                         if ( !isCollapsed(elements[r]) ) {
                             elements[r].classList.remove("hidden");
                             r++;
@@ -331,10 +313,13 @@ function toggleMe(who) {
                 while ( elements[h] !== stop && elements[h] !== undefined ) {
                     elements[h].classList.add("hidden");
                     h++;
-              }
+                }
             }
-            // re-affirm the event listener:
+            // re-affirm the event listener; we don't need to do this
+            // if the element is not a header, because only headers
+            // are clickable
             addToggler(who);
+
             // probably don't have to break it here, but maybe it will
             // run faster if it doesn't have to go through the rest of
             // the page elements:
@@ -349,6 +334,7 @@ function toggleSame() {
 "use strict";
     var active = whoIsActive();
     var activeHeaderName = active.tagName;
+    // are we toggling all <h1>s?
     if ( activeHeaderName === "H1" ) {
         var h1s = document.getElementsByTagName("H1");
         toggleHandler(active);
@@ -367,6 +353,7 @@ function toggleSame() {
             }
         }
     }
+    // are we toggling things other than <h1>s?
     else {
         toggleHandler(active);
         var activeNum = getHeaderNum(active);
@@ -534,6 +521,26 @@ function activateSame(ref, dir, num) {
     }
 }
 
+// `down` is a boolean: true is down, false is up
+function nextUp(down) {
+"use strict";
+    var b = whoIsActive();
+    for ( var k = 0; k < visible.length; k++ ) {
+        if ( visible[k] === b ) {
+            for ( var v = (down ? (k+1) : (k-1)); (down ? v < visible.length: v >= 0); (down ? v++ : v--) ) {
+                if ( yesHeaderTag(visible[v].tagName) ) {
+                    if ( (getHeaderNum(b) > getHeaderNum(visible[v])) || !yesHeaderTag(b.tagName) ) {
+                        clearActive(visible);
+                        makeActive(visible[v]);
+                        break;
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
 function makeActive(me) {
 "use strict";
 // uses global var "url"
@@ -556,7 +563,13 @@ function clearActive(array) {
 // OTHER FUNCTIONS
 //////////////////
 
-function getElements(refArray, visibleOnly) {
+// `fromTheArray` and `visibleOnly` are booleans; `refArray` is an
+// array of tag names.  if `fromTheArray` is true, only elements whose
+// tagNames match the refArray are returned; if it is false, only
+// elements who DON'T match get returned.  if `visibleOnly` is true,
+// only elements that aren't class="hidden" get returned, and
+// vice-versa if false
+function getElements(fromTheArray, refArray, visibleOnly) {
 "use strict";
 // set up a counter; this will be used to build the array of header
 // elements:
@@ -573,17 +586,19 @@ var matches = [];
             // don't include the infobox in the array of visible
             // headers; if visibleOnly is false, DO include the
             // "hidden" headers:
-            if ( elemNo === refNo && !elements[i].parentElement.classList.contains("js-infobox") ) {
-                if ( !visibleOnly ) {
-                    // and add the element to the header-only array:
-                    matches[counter] = elements[i];
-                    counter++;
-                }
-                else {
-                    if ( !elements[i].classList.contains("hidden")) {
+            if ( !elements[i].parentElement.classList.contains("js-infobox") && !elements[i].classList.contains("js-infobox") ) {
+                if ( (fromTheArray && elemNo === refNo) || (!fromTheArray && elemNo !== refNo) ) {
+                    if ( !visibleOnly ) {
                         // and add the element to the header-only array:
                         matches[counter] = elements[i];
                         counter++;
+                    }
+                    else {
+                        if ( !elements[i].classList.contains("hidden")) {
+                            // and add the element to the header-only array:
+                            matches[counter] = elements[i];
+                            counter++;
+                        }
                     }
                 }
             }
