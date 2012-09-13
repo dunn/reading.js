@@ -7,6 +7,9 @@
 // just a list to reference when dealing with header elements;
 // in all caps because I guess javascript likes that?
 var headerList = [ "H1", "H2", "H3", "H4", "H5", "H6" ];
+// these are excluded from the array of elements that can be made
+// active (by scrolling with j/k and other keys):
+var scrollSkip = [ "HEADER", "HR" ];
 
 // this array will be populated with document.body.children
 var elements = [];
@@ -54,7 +57,7 @@ document.documentElement.classList.add("dark");
 elements = document.body.children;
 
 // get every element except for the <header>:
-visible = getElements(false, [ "HEADER" ], true);
+visible = getElements(false, scrollSkip, true);
 
 // get the <h1>, <h2> etc headers:
 headers = getElements(true, headerList, false);
@@ -249,7 +252,9 @@ function toggleHandler(what) {
     
     // repopulate arrays:
     headers = getElements(true, headerList, true);
-    visible = getElements(false, [ "HEADER" ], true);
+    visible = getElements(false, scrollSkip, true);
+
+// end toggleHandler
 }
 
 function toggleMe(who) {
@@ -575,30 +580,16 @@ function getElements(fromTheArray, refArray, visibleOnly) {
 var counter = 0;
 var matches = [];
     // move through the array that contains every element and see
-    // which elements are headers
+    // which elements are matches
     for ( var i = 0; i < elements.length; i++ ) {
-        // for each element found, see if it matches anything on our
-        // header reference list:
-        for ( var j = 0; j < refArray.length; j++ ) {
-            var elemNo = elements[i].tagName;
-            var refNo = refArray[j];
-            // don't include the infobox in the array of visible
-            // headers; if visibleOnly is false, DO include the
-            // "hidden" headers:
-            if ( !elements[i].parentElement.classList.contains("js-infobox") && !elements[i].classList.contains("js-infobox") ) {
-                if ( (fromTheArray && elemNo === refNo) || (!fromTheArray && elemNo !== refNo) ) {
-                    if ( !visibleOnly ) {
-                        // and add the element to the header-only array:
-                        matches[counter] = elements[i];
-                        counter++;
-                    }
-                    else {
-                        if ( !elements[i].classList.contains("hidden")) {
-                            // and add the element to the header-only array:
-                            matches[counter] = elements[i];
-                            counter++;
-                        }
-                    }
+        // don't include the infobox in the array of visible
+        // headers:
+        if ( !elements[i].parentElement.classList.contains("js-infobox") && !elements[i].classList.contains("js-infobox") ) {
+            if ( (fromTheArray && isOneOf(elements[i].tagName, refArray)) || (!fromTheArray && !isOneOf(elements[i].tagName, refArray)) ) {
+                if ( !visibleOnly || (visibleOnly && !elements[i].classList.contains("hidden")) ) {
+                    // and add the element to the header-only array:
+                    matches[counter] = elements[i];
+                    counter++;
                 }
             }
         }
@@ -610,4 +601,13 @@ function yesHeaderTag(tag) {
 "use strict";
     var t = tag.tagName;
     return ( t === "H1" || t === "H2" || t === "H3" || t === "H4" || t === "H5" || t === "H6" );
+}
+
+function isOneOf(thing, array) {
+"use strict";
+    for ( var i = 0; i < array.length; i++ ) {
+        if ( thing === array[i] ) {
+            return true;
+        }
+    }
 }
