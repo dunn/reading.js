@@ -146,11 +146,11 @@ var theKey = key.which || key.keyCode;
     }        
     // if they pressed 'j' then move down one:
     if ( theKey === keyNext ) {
-        activateSame(visible, "down", 1);
+        moveActive(visible, true, 1);
     }
     // if they press 'k' go up:
     else if ( theKey === keyPrev ) {
-        activateSame(visible, "up", 1);
+        moveActive(visible, false, 1);
     }
     // if they press "u", go to the first visible header:
     else if ( theKey === keyFirst ) {
@@ -498,29 +498,23 @@ function isAnythingHidden(things) {
 // ACTIVE/SCROLL FUNCTIONS
 //////////////////////////
 
-// make active a header of the same level (up or down):
-function activateSame(ref, dir, num) {
+function moveActive(ref, down, num) {
 "use strict";
-    if ( dir === "down" ) {
-        // ref.length - 1 so we can't scroll beyond the last
-        // header:
-        for ( var i = 0; i < ( ref.length - 1 ); i++ ) {
-            if ( ref[i].classList.contains("active") ) {
+    for ( var i = 0; i < ref.length; i++ ) {
+        if ( ref[i].classList.contains("active") ) {
+            // ref.length - 1 so we can't scroll beyond the last
+            // header:
+            if ( down && i < ( ref.length - 1) ) {
                 clearActive(ref);
                 makeActive(ref[i + num]);
-                // if we don't break it will loop forever
-                break;
             }
-        }
-    }
-    else {
-        for ( var k = ref.length - 1; k > 0; k-- ) {
-            if ( ref[k].classList.contains("active") ) {
+            // i > 0 so we can't go up beyond the first header:
+            else if ( !down && i > 0 ) {
                 clearActive(ref);
-                makeActive(ref[k - num]);
-                // if we don't break it will loop forever
-                break;
+                makeActive(ref[i - num]);
             }
+            // if we don't break it will loop forever
+            break;
         }
     }
 }
