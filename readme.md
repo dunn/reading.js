@@ -16,7 +16,7 @@ a well-structured HTML file, they add:
 - **Section folding**
     
 - **Two color schemes** (Ethan Schoonover's
-    [Solarized](http://ethanschoonover.com/solarized) are awesome.)
+    [Solarized](http://ethanschoonover.com/solarized) is awesome.)
     
 ## Using Reading.js
 
@@ -43,8 +43,8 @@ converting documents to HTML.
 ## What do you mean by "well-structured HTML"?
 
 I designed Reading.js to use with the HTML documents that I make with
-[pandoc](http://johnmacfarlane.net/pandoc/ "pandoc project page"), it
-should play nice with other Markdown-to-HTML converters as well.  But
+[pandoc](http://johnmacfarlane.net/pandoc/ "pandoc project page").  It
+should work fine with other Markdown-to-HTML converters as well.  But
 it **won't** work with most HTML documents, because:
 
 1. Reading.js can only collapse sections of text that begin with a
