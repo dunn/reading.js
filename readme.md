@@ -1,6 +1,6 @@
 # Reading.js
 
-This project is a half-hearted attempt to make it easier to read
+The point of Reading.js is to make it easier to read
 things&mdash;particularly long documents&mdash;online.
 [For example, here's what Walter Ott's *Modern Philosophy* looks like with Reading.js](http://baruffio.com/modernphilosophy/text.html
 "Modern Philosophy by Walter Ott").
@@ -61,27 +61,29 @@ The `range-method` branch of this project is an older version of the
 script that hid content using JavaScript instead of CSS.  That avoided
 some of the limitations just mentioned, but was much slower.
 
-Clearly these limitations only exist because I'm a shitty programmer.
-But I'm also lazy, and I only use Reading.js on HTML files made by
-pandoc, so I probably won't fix this any time soon.  (Another reason
-for you to fork it, yes?)
+These limitations exist because I'm a crummy programmer.  But I'm also
+lazy, and I only use Reading.js on HTML files made by pandoc, so I
+probably won't fix this any time soon.  (Another reason for you to
+fork it.)
 
 ## Does this work in all browsers?
 
 I doubt it.  It *seems* to work OK in
 
-- Firefox 15 (running on Mountain Lion)
+- Firefox 15
 
-- Chrome 21 (Mountain Lion)
+- Chrome 21
 
-- Opera 12 (Mountain Lion)
+- Opera 12
 
-- Safari 6 (Windows Vista j/k lol)
+- Safari 6
 
-But beyond that I'm blissfully ignorant.  (Also, lists look pretty
-wonky in Firefox and other Gecko browsers thanks to a
+(All on Mountain Lion.)  But beyond that I'm blissfully ignorant.
+Also, lists look pretty wonky in Firefox and other Gecko browsers
+thanks to a
 [bug that's old enough to be in junior high](https://bugzilla.mozilla.org/show_bug.cgi?id=36854),
-so I guess you could argue it doesn't really work there after all.)
+so I guess you could argue it doesn't really work there after all.
+(Oh, and the same thing happens in Opera.  But who uses Opera?)
 
 ## "License"
 
