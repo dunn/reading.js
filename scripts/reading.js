@@ -135,50 +135,51 @@ window.onkeypress=function(key) {
 key = key || window.event;
 var theKey = key.which || key.keyCode;
 
+switch (theKey) {
     // if they hit [return], toggle the active section:
-    if ( theKey === 13 ) {
+    case 13 :
         toggleHandler( whoIsActive() );
-    }
+    break;
     // if they press "a", collapse all headers at the same level as
     // the active header:
-    else if ( theKey === keyAll ) {
+    case keyAll :
         var active = whoIsActive();
         if ( yesHeaderTag(active) ) {
             toggleHandler(document.getElementsByTagName(active.tagName));
         }
-    }        
+    break;
     // if they pressed 'j' then move down one:
-    if ( theKey === keyNext ) {
+    case keyNext :
         moveActive(visible, true, 1);
-    }
+    break;
     // if they press 'k' go up:
-    else if ( theKey === keyPrev ) {
+    case keyPrev :
         moveActive(visible, false, 1);
-    }
+    break;
     // if they press "u", go to the first visible header:
-    else if ( theKey === keyFirst ) {
+    case keyFirst :
         clearActive();
         makeActive(visible[0]);
-    }
+    break;
     // if they press "m" go to the last visible header:
-    else if ( theKey === keyLast ) {
+    case keyLast :
         clearActive();
         makeActive(visible[visible.length - 1]);
-    }
+    break;
     // if they press "i", go to the previous header that's a level up:
-    else if ( theKey === keyPrevUp ) {
+    case keyPrevUp :
         nextUp(false);
-    }
+    break;
     // if they press "o" go to the next header that's a level up:
-    else if ( theKey === keyNextUp ) {
+    case keyNextUp :
         nextUp(true);
-    }
+    break;
     // if they press "f", expand everything
     // (this is a useful feature I guess, but it also has to be
     // activated before the user tries to search; hence being bound to
     // "f".  This is more a work-around than an actual solution,
     // obvs):
-    else if ( theKey === keyExpand ) {
+    case keyExpand :
         while ( isAnythingHidden(visible) ) {
             for ( var f = 0; f < visible.length; f++ ) {
                 if ( visible[f].classList.contains("collapsed") ) {
@@ -186,13 +187,14 @@ var theKey = key.which || key.keyCode;
                 }
             }
         }
-    }
+    break;
     // press "s" to change the theme
-    else if ( theKey === keyTheme ) {
+    case keyTheme :
         var html = document.documentElement;
         html.classList.toggle("dark");
         html.classList.toggle("light");
-    }
+    break;
+}
 
 // end keypress fn
 };
