@@ -100,7 +100,7 @@ if ( urlPound !== -1 ) {
     var startAt = document.getElementById(urlId);
     // if it's a header, make it active upon loading:
     if ( yesHeaderTag(startAt) ) {
-        clearActive(headers);
+        clearActive();
         makeActive(startAt);
     }
 }
@@ -142,7 +142,10 @@ var theKey = key.which || key.keyCode;
     // if they press "a", collapse all headers at the same level as
     // the active header:
     else if ( theKey === keyAll ) {
-        toggleSame();
+        var active = whoIsActive();
+        if ( yesHeaderTag(active) ) {
+            toggleHandler(document.getElementsByTagName(active.tagName));
+        }
     }        
     // if they pressed 'j' then move down one:
     if ( theKey === keyNext ) {
@@ -154,12 +157,12 @@ var theKey = key.which || key.keyCode;
     }
     // if they press "u", go to the first visible header:
     else if ( theKey === keyFirst ) {
-        clearActive(visible);
+        clearActive();
         makeActive(visible[0]);
     }
     // if they press "m" go to the last visible header:
     else if ( theKey === keyLast ) {
-        clearActive(visible);
+        clearActive();
         makeActive(visible[visible.length - 1]);
     }
     // if they press "i", go to the previous header that's a level up:
@@ -215,7 +218,7 @@ function toggleHandler(what) {
     
     // if something was clicked, we need to figure out what:
     else {
-        clearActive(headers);
+        clearActive();
         // if it was the header that was clicked, just return that
         // element:
         if ( yesHeaderTag(what.target) ) {
@@ -341,64 +344,54 @@ function toggleSame() {
     // are we toggling all <h1>s?
     if ( activeHeaderName === "H1" ) {
         var h1s = document.getElementsByTagName("H1");
-        toggleHandler(active);
+        toggleMe(active);
         if ( ! isCollapsed(active) ) {
             for ( var i = 0; i < h1s.length; i++ ) {
                 if ( h1s[i] !== active && isCollapsed(h1s[i]) ) {
-                toggleHandler(h1s[i]);
+                toggleMe(h1s[i]);
                 }
             }
         }
         else {
             for ( var k = 0; k < h1s.length; k++ ) {
                 if ( h1s[k] !== active && ! isCollapsed(h1s[k]) ) {
-                toggleHandler(h1s[k]);
+                toggleMe(h1s[k]);
                 }
             }
         }
     }
     // are we toggling things other than <h1>s?
     else if ( yesHeaderTag(active) ) {
-        toggleHandler(active);
+        toggleMe(active);
         var activeNum = getHeaderNum(active);
         for ( var b = 0; b < headers.length; b++ ) {
             if ( headers[b] === active ) {
-                // headers gets reset by toggleHandler, so we have to
-                // use 'subtract' to keep track of how many fewer
-                // headers there will be in the new array:
-                var subtract = 0;
                 var c = b - 1;
                 while ( getHeaderNum(headers[c]) >= activeNum ) {
                     var curNum = getHeaderNum(headers[c]);
                     if ( isCollapsed(active) ) {
                         if ( !isCollapsed(headers[c]) && curNum === activeNum ) {
-                            toggleHandler(headers[c]);
-                        }
-                        else {
-                            subtract++;
+                            toggleMe(headers[c]);
                         }
                     }
                     else {
                         if ( isCollapsed(headers[c]) && curNum === activeNum ) {
-                            toggleHandler(headers[c]);
-                        }
-                        else {
-                            subtract++;
+                            toggleMe(headers[c]);
                         }
                     }
                     c--;
                 }
-                var d = b - subtract + 1;
+                var d = b + 1;
                 while ( getHeaderNum(headers[d]) >= activeNum ) {
                     var curNum2 = getHeaderNum(headers[d]);
                     if ( isCollapsed(active) ) {
                         if ( !isCollapsed(headers[d]) && curNum2 === activeNum ) {
-                            toggleHandler(headers[d]);
+                            toggleMe(headers[d]);
                         }
                     }
                     else {
                         if ( isCollapsed(headers[d]) && curNum2 === activeNum ) {
-                            toggleHandler(headers[d]);
+                            toggleMe(headers[d]);
                         }
                     }
                     d++;
@@ -505,12 +498,12 @@ function moveActive(ref, down, num) {
             // ref.length - 1 so we can't scroll beyond the last
             // header:
             if ( down && i < ( ref.length - 1) ) {
-                clearActive(ref);
+                clearActive();
                 makeActive(ref[i + num]);
             }
             // i > 0 so we can't go up beyond the first header:
             else if ( !down && i > 0 ) {
-                clearActive(ref);
+                clearActive();
                 makeActive(ref[i - num]);
             }
             // if we don't break it will loop forever
@@ -528,7 +521,7 @@ function nextUp(down) {
             for ( var v = (down ? (k+1) : (k-1)); (down ? v < visible.length: v >= 0); (down ? v++ : v--) ) {
                 if ( yesHeaderTag(visible[v]) ) {
                     if ( (getHeaderNum(b) > getHeaderNum(visible[v])) || !yesHeaderTag(b) ) {
-                        clearActive(visible);
+                        clearActive();
                         makeActive(visible[v]);
                         break;
                     }
@@ -550,11 +543,9 @@ function makeActive(me) {
     me.scrollIntoView();
 }
 
-function clearActive(array) {
+function clearActive() {
 "use strict";
-    for ( var i = 0; i < array.length; i++ ) {
-        array[i].classList.remove("active");
-    }
+    whoIsActive().classList.remove("active");
 }
 
 //////////////////
