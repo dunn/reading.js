@@ -100,7 +100,6 @@ if ( urlPound !== -1 ) {
     var startAt = document.getElementById(urlId);
     // if it's a header, make it active upon loading:
     if ( yesHeaderTag(startAt) ) {
-        clearActive();
         makeActive(startAt);
     }
 }
@@ -150,29 +149,27 @@ switch (theKey) {
     break;
     // if they pressed 'j' then move down one:
     case keyNext :
-        moveActive(visible, true, 1);
+        makeActive(elemRelativeToActive(visible, true, 1));
     break;
     // if they press 'k' go up:
     case keyPrev :
-        moveActive(visible, false, 1);
+        makeActive(elemRelativeToActive(visible, false, 1));
     break;
     // if they press "u", go to the first visible header:
     case keyFirst :
-        clearActive();
         makeActive(visible[0]);
     break;
     // if they press "m" go to the last visible header:
     case keyLast :
-        clearActive();
         makeActive(visible[visible.length - 1]);
     break;
     // if they press "i", go to the previous header that's a level up:
     case keyPrevUp :
-        nextUp(false);
+        makeActive(elemOneLevelUp(false));
     break;
     // if they press "o" go to the next header that's a level up:
     case keyNextUp :
-        nextUp(true);
+        makeActive(elemOneLevelUp(true));
     break;
     // if they press "f", expand everything
     // (this is a useful feature I guess, but it also has to be
@@ -493,20 +490,18 @@ function isAnythingHidden(things) {
 // ACTIVE/SCROLL FUNCTIONS
 //////////////////////////
 
-function moveActive(ref, down, num) {
+function elemRelativeToActive(ref, down, num) {
 "use strict";
     for ( var i = 0; i < ref.length; i++ ) {
         if ( ref[i].classList.contains("active") ) {
             // ref.length - 1 so we can't scroll beyond the last
             // header:
             if ( down && i < ( ref.length - 1) ) {
-                clearActive();
-                makeActive(ref[i + num]);
+                return ref[i + num];
             }
             // i > 0 so we can't go up beyond the first header:
             else if ( !down && i > 0 ) {
-                clearActive();
-                makeActive(ref[i - num]);
+                return ref[i - num];
             }
             // if we don't break it will loop forever
             break;
@@ -515,7 +510,7 @@ function moveActive(ref, down, num) {
 }
 
 // `down` is a boolean: true is down, false is up
-function nextUp(down) {
+function elemOneLevelUp(down) {
 "use strict";
     var b = whoIsActive();
     for ( var k = 0; k < visible.length; k++ ) {
@@ -523,9 +518,7 @@ function nextUp(down) {
             for ( var v = (down ? (k+1) : (k-1)); (down ? v < visible.length: v >= 0); (down ? v++ : v--) ) {
                 if ( yesHeaderTag(visible[v]) ) {
                     if ( (getHeaderNum(b) > getHeaderNum(visible[v])) || !yesHeaderTag(b) ) {
-                        clearActive();
-                        makeActive(visible[v]);
-                        break;
+                        return visible[v];
                     }
                 }
             }
@@ -537,12 +530,15 @@ function nextUp(down) {
 function makeActive(me) {
 "use strict";
 // uses global var "url"
-    me.classList.add("active");
-    var id = me.getAttribute("id");
-    if ( id !== null ) {
-        window.location.replace(url + "#" + id);
+    if ( me !== undefined ) {
+        clearActive();
+        me.classList.add("active");
+        var id = me.getAttribute("id");
+        if ( id !== null ) {
+            window.location.replace(url + "#" + id);
+        }
+        me.scrollIntoView();
     }
-    me.scrollIntoView();
 }
 
 function clearActive() {
