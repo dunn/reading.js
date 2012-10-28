@@ -449,11 +449,13 @@ function toggleCollapse(where) {
 
 function getHeaderNum(who) {
 "use strict";
-    if ( who.length === undefined ) {
-        return who.tagName.slice(1);
-    }
-    else {
-        return who[0].tagName.slice(1);
+    if ( who !== undefined ) {
+        if ( who.length !== undefined ) {
+            return who[0].tagName.slice(1);
+        }
+        else {
+            return who.tagName.slice(1);
+        }
     }
 }
 
