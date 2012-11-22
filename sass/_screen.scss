@@ -1,8 +1,10 @@
 @media screen {
 
 body {
+  font-size: 125%;
+  text-align: justify;
   margin: 0 auto;
-  width: 40em;
+  width: 35em;
   & > h1,
   & > h2,
   & > h3,
@@ -28,6 +30,7 @@ hr {
 }
 
 .js-infobox {
+  font-size: 80%;
   position: fixed;
   left: 1em;
   top: 0;
@@ -170,13 +173,13 @@ ul.active {
 
 @media screen and (max-width: $break1-width) {
   body {
-    width: 30em;
+    width: 28em;
   }
 }
 
 @media screen and (max-width: $break2-width) {
   body {
-    width: 33em;
+    width: 30em;
   }
 /* get rid of the infobox on small displays */
   .js-infobox {
@@ -188,6 +191,7 @@ ul.active {
 
 @media screen and (max-width: $break3-width) {
   body {
+    font-size: 100%;
     width: auto;
     margin: 0 5%;
   }
