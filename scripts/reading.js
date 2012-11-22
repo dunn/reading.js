@@ -51,7 +51,7 @@ window.onload=function() {
 "use strict";
 
 // default to the dark Solarized theme
-document.documentElement.classList.add("dark");
+document.documentElement.classList.add("high");
 
 // populate the elements array (without the infobox):
 elements = document.body.children;
@@ -188,8 +188,18 @@ switch (theKey) {
     // press "s" to change the theme
     case keyTheme :
         var html = document.documentElement;
-        html.classList.toggle("dark");
-        html.classList.toggle("light");
+        if ( html.classList.contains("high") ) {
+            html.classList.toggle("high");
+            html.classList.toggle("light");
+        }
+        else if ( html.classList.contains("light") ) {
+            html.classList.toggle("light");
+            html.classList.toggle("dark");
+        }
+        else if ( html.classList.contains("dark") ) {
+            html.classList.toggle("dark");
+            html.classList.toggle("high");
+        }
     break;
 }
 
@@ -578,7 +588,7 @@ var matches = [];
                 }
             }
         }
-    }           
+    }
     return matches;
 }
 

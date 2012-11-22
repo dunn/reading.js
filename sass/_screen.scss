@@ -66,6 +66,31 @@ ul.active {
     /* https://bugzilla.mozilla.org/show_bug.cgi?id=36854 */
 }
 
+/* high-contrast theme */
+.high {
+  .active {
+    border: .125em solid black;
+    button {
+      border: .125em solid black;
+    }
+  }
+  button {
+    background-color: white;
+    border: .125em solid black;
+  }
+  .collapsed {
+    color: gray;
+    border-color: gray;
+    .active {
+      color: white;
+    }
+    button {
+      border-color: gray;
+      color: gray;
+    }
+  }
+}
+
 /* SOLARIZED THEMES */
 /* Copyright (c) 2011 Ethan Schoonover */
 /* Released under the MIT license and available at */
