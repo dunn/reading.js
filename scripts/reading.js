@@ -50,7 +50,7 @@ var url;
 window.onload=function() {
 "use strict";
 
-// default to the dark Solarized theme
+// default to the high-contrast theme
 document.documentElement.classList.add("high");
 
 // populate the elements array (without the infobox):
