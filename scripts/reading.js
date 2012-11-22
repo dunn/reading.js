@@ -99,7 +99,7 @@ if ( urlPound !== -1 ) {
     // find the element with the id from the url
     var startAt = document.getElementById(urlId);
     // if it's a header, make it active upon loading:
-    if ( yesHeaderTag(startAt) ) {
+    if ( isHeader(startAt) ) {
         makeActive(startAt);
     }
 }
@@ -143,7 +143,7 @@ switch (theKey) {
     // the active header:
     case keyAll :
         var active = whoIsActive();
-        if ( yesHeaderTag(active) ) {
+        if ( isHeader(active) ) {
             toggleHandler(document.getElementsByTagName(active.tagName));
         }
     break;
@@ -230,7 +230,7 @@ function toggleHandler(what) {
         clearActive();
         // if it was the header that was clicked, just return that
         // element:
-        if ( yesHeaderTag(what.target) ) {
+        if ( isHeader(what.target) ) {
             headerTarget = what.target;
             headerTarget.classList.add("active");
         }
@@ -251,7 +251,7 @@ function toggleHandler(what) {
         
     // is it just one header, or an array?  If it's not an array it
     // won't have a defined length:
-    if ( headerTarget.length === undefined && yesHeaderTag(headerTarget) ) {
+    if ( headerTarget.length === undefined && isHeader(headerTarget) ) {
         toggleMe(headerTarget);
     }
     else {
@@ -295,7 +295,7 @@ function toggleMe(who) {
                     // if the first element we come across is not a
                     // header element, then unhide it and increment
                     // the new counter:
-                    if ( ! yesHeaderTag(elements[r]) ) {
+                    if ( ! isHeader(elements[r]) ) {
                         elements[r].classList.remove("hidden");
                         r++;
                     }
@@ -370,7 +370,7 @@ function toggleSame() {
         }
     }
     // are we toggling things other than <h1>s?
-    else if ( yesHeaderTag(active) ) {
+    else if ( isHeader(active) ) {
         toggleMe(active);
         var activeNum = getHeaderNum(active);
         for ( var b = 0; b < headers.length; b++ ) {
@@ -433,7 +433,7 @@ function compareHeaders(counter, array, headerNum) {
         // targetHeader.  Using '<' not '>' because smaller is bigger
         // (h1 < h6):
         else {
-            if ( yesHeaderTag(array[i]) && (array[i].tagName.slice(1)) <= headerNum ) {
+            if ( isHeader(array[i]) && (array[i].tagName.slice(1)) <= headerNum ) {
                 // return the header match
                 return array[i];
             }
@@ -528,8 +528,8 @@ function elemOneLevelUp(down) {
     for ( var k = 0; k < visible.length; k++ ) {
         if ( visible[k] === b ) {
             for ( var v = (down ? (k+1) : (k-1)); (down ? v < visible.length: v >= 0); (down ? v++ : v--) ) {
-                if ( yesHeaderTag(visible[v]) ) {
-                    if ( (getHeaderNum(b) > getHeaderNum(visible[v])) || !yesHeaderTag(b) ) {
+                if ( isHeader(visible[v]) ) {
+                    if ( (getHeaderNum(b) > getHeaderNum(visible[v])) || !isHeader(b) ) {
                         return visible[v];
                     }
                 }
@@ -592,7 +592,7 @@ var matches = [];
     return matches;
 }
 
-function yesHeaderTag(tag) {
+function isHeader(tag) {
 "use strict";
     var t = tag.tagName;
     return ( t === "H1" || t === "H2" || t === "H3" || t === "H4" || t === "H5" || t === "H6" );
