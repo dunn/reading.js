@@ -7,7 +7,7 @@ things&mdash;particularly long documents&mdash;online.
 
 ## Features
 
-The two important things are the `scripts/reading.js` script and the
+The key bits are the `scripts/reading.js` script and the
 `stylesheets/reading.css` stylesheet.  When these two are included in
 a well-structured HTML file, they add:
 
@@ -15,15 +15,19 @@ a well-structured HTML file, they add:
 
 - **Section folding**
     
-- **Two color schemes** (Ethan Schoonover's
-    [Solarized](http://ethanschoonover.com/solarized) is awesome.)
+- **Three color schemes** (it defaults to a high-contrast mode, but
+    try the [Solarized](http://ethanschoonover.com/solarized "Ethan
+    Schoonover's project page")-style themes.)
     
 ## Using Reading.js
 
 Feel free to download and modify this project to your heart's content
-(seriously, please make it better).  But if you just want to use the
-files with your own document, add these two lines to the `<head>` of
-your HTML document:
+(seriously, please make it better).  The stylesheet is written with
+[SASS](http://sass-lang.com "Syntactically Awesome Stylesheets"); the
+source files are in the `sass` directory.
+
+If you just want to use the files with your own document, add these
+two lines to the `<head>` of your HTML document:
 
 ```html
 <link rel="stylesheet" href="http://baruffio.com/reading.js/stylesheets/reading.css">
@@ -70,20 +74,21 @@ fork it.)
 
 I doubt it.  It *seems* to work OK in
 
-- Firefox 15
+- Firefox 15&ndash;16
 
-- Chrome 21
+- Chrome 21&ndash;23 (sometimes slow)
 
 - Opera 12
 
 - Safari 6
 
 (All on Mountain Lion.)  But beyond that I'm blissfully ignorant.
-Also, lists look pretty wonky in Firefox and other Gecko browsers
+Actually, lists look pretty wonky in Firefox and other Gecko browsers
 thanks to a
-[bug that's old enough to be in junior high](https://bugzilla.mozilla.org/show_bug.cgi?id=36854),
-so I guess you could argue it doesn't really work there after all.
-(Oh, and the same thing happens in Opera.  But who uses Opera?)
+[bug that's old enough to be in junior high](https://bugzilla.mozilla.org/show_bug.cgi?id=36854
+"jesus christ amirite"), so I guess you could argue it doesn't really
+work there after all.  (Oh, and the same thing happens in Opera.  But
+who uses Opera?)
 
 ## "License"
 
