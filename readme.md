@@ -78,7 +78,7 @@ I doubt it.  It *seems* to work OK in
 
 - Chrome 21&ndash;23 (sometimes slow)
 
-- Opera 12
+- Opera 12 (the "keyboard shortcuts" box looks weird)
 
 - Safari 6
 
