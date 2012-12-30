@@ -1,8 +1,7 @@
 // written by Alex Dunn in 2012
 
-////////////////////
-// GLOBAL VARIABLES:
-////////////////////
+(function() {
+"use strict";
 
 // just a list to reference when dealing with header elements;
 // in all caps because I guess javascript likes that?
@@ -44,11 +43,10 @@ var keyTheme = 115;
 // `#id` to it):
 var url;
 
-/////////////////
-// SETUP FUNCTION
-/////////////////
+///////////
+// SETUP //
+///////////
 window.onload=function() {
-"use strict";
 
 // default to the high-contrast theme
 document.documentElement.classList.add("high");
@@ -121,14 +119,13 @@ document.body.insertBefore(helpDiv, firstElement);
 // and give it some content:
 helpDiv.innerHTML=helpBoxText;
 
-// end onload function
+// end window.onload function
 };
 
-////////////////////
-// KEYPRESS FUNCTION
-////////////////////
+//////////////
+// KEYPRESS //
+//////////////
 window.onkeypress=function(key) {
-"use strict";
 
 // http://stackoverflow.com/a/5420482
 key = key || window.event;
@@ -203,17 +200,16 @@ switch (theKey) {
     break;
 }
 
-// end keypress fn
+// end window.onkeypress fn
 };
 
-/////////////////////
-// TOGGLING FUNCTIONS
-/////////////////////
+////////////////////////
+// TOGGLING FUNCTIONS //
+////////////////////////
 
 // toggleHandler checks what's being toggled, and in turn calls
 // toggleMe or toggleSame:
 function toggleHandler(what) {
-"use strict";
 
     var headerTarget;
 
@@ -270,7 +266,6 @@ function toggleHandler(what) {
 }
 
 function toggleMe(who) {
-"use strict";
     // first we use this `for` loop to locate ourselves in the
     // document
     for ( var i = 0; i < elements.length; i++ ) {
@@ -347,7 +342,6 @@ function toggleMe(who) {
 
 // toggle all headers of the same level as the active:
 function toggleSame() {
-"use strict";
     var active = whoIsActive();
     var activeHeaderName = active.tagName;
     // are we toggling all <h1>s?
@@ -411,16 +405,14 @@ function toggleSame() {
     }
 }
 
-/////////////////
-// TOGGLE SUPPORT
-/////////////////
+////////////////////
+// TOGGLE SUPPORT //
+////////////////////
 
 // this function finds the active header, then returns the next header
 // that's at the same level or higher (i.e., if the active header is
 // h3, it will return the next h3, h2, or h1---whichever comes first):
 function compareHeaders(counter, array, headerNum) {
-"use strict";
-
     // 'counter' is the count var for whatever current `for` loop is
     // running:
     for ( var i = counter + 1; i < array.length; i++ ) {
@@ -443,22 +435,18 @@ function compareHeaders(counter, array, headerNum) {
 
 // event listener; needs to be re-added each time:
 function addToggler(where) {
-"use strict";
     where.onclick=toggleHandler;
 }
 
 function isCollapsed(thing) {
-"use strict";
     return thing.classList.contains("collapsed");
 }
 
 function toggleCollapse(where) {
-"use strict";
     where.classList.toggle("collapsed");
 }
 
 function getHeaderNum(who) {
-"use strict";
     if ( who !== undefined ) {
         if ( who.length !== undefined ) {
             return who[0].tagName.slice(1);
@@ -471,19 +459,16 @@ function getHeaderNum(who) {
 
 // just returns true if the the argument passed was a click event:
 function isClick(input) {
-"use strict";
     return ( input.target !== undefined );
 }
 
 // what is the first (only) element that has `class="active"`?
 function whoIsActive() {
-"use strict";
     return document.getElementsByClassName("active")[0];
 }
 
 // well, IS anything hidden?
 function isAnythingHidden(things) {
-"use strict";
     if ( things.length === undefined ) {
         return things.classList.contains("collapsed");
     }
@@ -498,12 +483,11 @@ function isAnythingHidden(things) {
     }
 }
 
-//////////////////////////
-// ACTIVE/SCROLL FUNCTIONS
-//////////////////////////
+/////////////////////////////
+// ACTIVE/SCROLL FUNCTIONS //
+/////////////////////////////
 
 function elemRelativeToActive(ref, down, num) {
-"use strict";
     for ( var i = 0; i < ref.length; i++ ) {
         if ( ref[i].classList.contains("active") ) {
             // ref.length - 1 so we can't scroll beyond the last
@@ -523,7 +507,6 @@ function elemRelativeToActive(ref, down, num) {
 
 // `down` is a boolean: true is down, false is up
 function elemOneLevelUp(down) {
-"use strict";
     var b = whoIsActive();
     for ( var k = 0; k < visible.length; k++ ) {
         if ( visible[k] === b ) {
@@ -540,7 +523,6 @@ function elemOneLevelUp(down) {
 }
 
 function makeActive(me) {
-"use strict";
 // uses global var "url"
     if ( me !== undefined ) {
         clearActive();
@@ -554,13 +536,12 @@ function makeActive(me) {
 }
 
 function clearActive() {
-"use strict";
     whoIsActive().classList.remove("active");
 }
 
-//////////////////
-// OTHER FUNCTIONS
-//////////////////
+/////////////////////
+// OTHER FUNCTIONS //
+/////////////////////
 
 // `fromTheArray` and `visibleOnly` are booleans; `refArray` is an
 // array of tag names.  if `fromTheArray` is true, only elements whose
@@ -569,7 +550,6 @@ function clearActive() {
 // only elements that aren't class="hidden" get returned, and
 // vice-versa if false
 function getElements(fromTheArray, refArray, visibleOnly) {
-"use strict";
 // set up a counter; this will be used to build the array of header
 // elements:
 var counter = 0;
@@ -593,16 +573,17 @@ var matches = [];
 }
 
 function isHeader(tag) {
-"use strict";
     var t = tag.tagName;
     return ( t === "H1" || t === "H2" || t === "H3" || t === "H4" || t === "H5" || t === "H6" );
 }
 
 function isOneOf(thing, array) {
-"use strict";
     for ( var i = 0; i < array.length; i++ ) {
         if ( thing === array[i] ) {
             return true;
         }
     }
 }
+
+// end
+})();
