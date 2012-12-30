@@ -68,8 +68,7 @@ for ( var i = 0; i < headers.length; i++ ) {
     headers[i].innerHTML += headerLinks;
 
     // and add an event listener:
-    // http://www.quirksmode.org/js/introevents.html
-    headers[i].onclick=toggleHandler;
+    addListener(headers[i], "click", toggleHandler);
 }
 
 // make the first header the target of the "skip to content link" in
@@ -326,10 +325,6 @@ function toggleMe(who) {
                     h++;
                 }
             }
-            // re-affirm the event listener; we don't need to do this
-            // if the element is not a header, because only headers
-            // are clickable
-            addToggler(who);
 
             // probably don't have to break it here, but maybe it will
             // run faster if it doesn't have to go through the rest of
@@ -431,11 +426,6 @@ function compareHeaders(counter, array, headerNum) {
             }
         }
     }
-}
-
-// event listener; needs to be re-added each time:
-function addToggler(where) {
-    where.onclick=toggleHandler;
 }
 
 function isCollapsed(thing) {
