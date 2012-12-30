@@ -46,7 +46,7 @@ var url;
 ///////////
 // SETUP //
 ///////////
-window.onload=function() {
+addListener(window, "load", function() {
 
 // default to the high-contrast theme
 document.documentElement.classList.add("high");
@@ -119,13 +119,13 @@ document.body.insertBefore(helpDiv, firstElement);
 // and give it some content:
 helpDiv.innerHTML=helpBoxText;
 
-// end window.onload function
-};
+// end window.load event listener
+});
 
 //////////////
 // KEYPRESS //
 //////////////
-window.onkeypress=function(key) {
+addListener(window, "keypress", function(key) {
 
 // http://stackoverflow.com/a/5420482
 key = key || window.event;
@@ -200,8 +200,8 @@ switch (theKey) {
     break;
 }
 
-// end window.onkeypress fn
-};
+// end window.keypress event listener
+});
 
 ////////////////////////
 // TOGGLING FUNCTIONS //
@@ -542,6 +542,19 @@ function clearActive() {
 /////////////////////
 // OTHER FUNCTIONS //
 /////////////////////
+
+/// add event listener:
+// https://developer.mozilla.org/en-US/docs/DOM/element.addEventListener
+// http://stackoverflow.com/a/1841941/1431858
+/// only `type` argument is quoted (i.e.: window, "load", function())
+function addListener(element, type, response) {
+    if (element.addEventListener) {
+        element.addEventListener(type, response, false);
+    }
+    else if (element.attachEvent) {
+        element.attachEvent("on" + type, response);
+    }
+}
 
 // `fromTheArray` and `visibleOnly` are booleans; `refArray` is an
 // array of tag names.  if `fromTheArray` is true, only elements whose
