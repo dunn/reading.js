@@ -164,11 +164,11 @@ addListener(window, "keypress", function(key) {
         break;
         // if they press "i", go to the previous header that's a level up:
     case keyPrevUp :
-        makeActive(elemOneLevelUp(false));
+        makeActive(headerOneLevelUp(false));
         break;
         // if they press "o" go to the next header that's a level up:
     case keyNextUp :
-        makeActive(elemOneLevelUp(true));
+        makeActive(headerOneLevelUp(true));
         break;
         // if they press "f", expand everything
         // (this is a useful feature I guess, but it also has to be
@@ -501,7 +501,7 @@ function elemRelativeToActive(ref, down, num) {
 }
 
 // `down` is a boolean: true is down, false is up
-function elemOneLevelUp(down) {
+function headerOneLevelUp(down) {
     var b = whoIsActive();
     for ( var k = 0; k < visible.length; k++ ) {
         if ( visible[k] === b ) {
