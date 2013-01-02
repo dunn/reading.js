@@ -38,140 +38,143 @@ var keyAll = 97;
 var keyExpand = 102;
 var keyTheme = 115;
 
-// this gets set to the window.location (minus `#id`) in the `onload`
-// function and is also used in the `makeActive` function (we add the
-// `#id` to it):
+// this gets set to the window.location (minus `#id`) in the
+// `window.load` function and is also used in the `makeActive`
+// function (we add the `#id` to it):
 var url;
 
 ///////////
 // SETUP //
 ///////////
+
 addListener(window, "load", function() {
+// do this stuff when the `window.load` event fires:
 
-// default to the high-contrast theme
-document.documentElement.classList.add("high");
+    // default to the high-contrast theme
+    document.documentElement.classList.add("high");
 
-// populate the elements array (without the infobox):
-elements = document.body.children;
+    // populate the elements array (without the infobox):
+    elements = document.body.children;
 
-// get every element except for the <header>:
-visible = getElements(false, scrollSkip, true);
+    // get every element except for the <header>:
+    visible = getElements(false, scrollSkip, true);
 
-// get the <h1>, <h2> etc headers:
-headers = getElements(true, headerList, false);
+    // get the <h1>, <h2> etc headers:
+    headers = getElements(true, headerList, false);
 
-// make the first header active, but don't scroll to it:
-headers[0].classList.add("active");
+    // make the first header active, but don't scroll to it:
+    headers[0].classList.add("active");
 
-for ( var i = 0; i < headers.length; i++ ) {
-    // append some cute buttons:
-    headers[i].innerHTML += headerLinks;
+    for ( var i = 0; i < headers.length; i++ ) {
+        // append some cute buttons:
+        headers[i].innerHTML += headerLinks;
 
-    // and add an event listener:
-    addListener(headers[i], "click", toggleHandler);
-}
-
-// make the first header the target of the "skip to content link" in
-// the infobox.  if it doesn't already have an id, give it one:
-var firstHId = headers[0].getAttribute("id");
-var startId;
-if ( firstHId === null ) {
-    headers[0].setAttribute("id", "startOfContent");
-    startId = "startOfContent";
-}
-else {
-    startId = firstHId;
-}
-
-// url handling; changing the active header adds the #id of that
-// header to the window.location, and if someone navigates to the
-// document using a #id link, activate that header:
-url = window.location.toString();
-// check if it has an ID suffix:
-var urlPound = url.indexOf("#");
-if ( urlPound !== -1 ) {
-    var urlId = url.slice(urlPound + 1);
-    // after getting the id, remove it from the global url var:
-    url = url.slice(0, urlPound);
-    // find the element with the id from the url
-    var startAt = document.getElementById(urlId);
-    // if it's a header, make it active upon loading:
-    if ( isHeader(startAt) ) {
-        makeActive(startAt);
+        // and add an event listener:
+        addListener(headers[i], "click", toggleHandler);
     }
-}
 
-//////////////////////////////////
-// NOW add the infobox at the top:
+    // make the first header the target of the "skip to content link"
+    // in the infobox.  if it doesn't already have an id, give it one:
+    var firstHId = headers[0].getAttribute("id");
+    var startId;
+    if ( firstHId === null ) {
+        headers[0].setAttribute("id", "startOfContent");
+        startId = "startOfContent";
+    }
+    else {
+        startId = firstHId;
+    }
 
-var helpBoxText = "<p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><aside><h3>Keyboard shortcuts</h3><ul><li><span class=\"key\">" + String.fromCharCode(keyNext) + " / " + String.fromCharCode(keyPrev) + "</span> next/previous</li><li><span class=\"key\">enter</span> toggle active header</li><li><span class=\"key\">" + String.fromCharCode(keyNextUp) + " / " + String.fromCharCode(keyPrevUp) + "</span> next/previous header (one level up)</li><li><span class=\"key\">" + String.fromCharCode(keyFirst) + " / " + String.fromCharCode(keyLast) + "</span> start/end of document</li><li><span class=\"key\">" + String.fromCharCode(keyAll) + "</span> toggle everything in this section</li><li><span class=\"key\">" + String.fromCharCode(keyExpand) + "</span> expand everything (do this before you search)</li><li><span class=\"key\">" + String.fromCharCode(keyTheme) + "</span> change theme</li></ul></aside>";
+    // If the page loads with an #id that points to a header, scroll
+    // to that header when the page loads:
+    url = window.location.toString();
+    // check if the url has an #id suffix:
+    var urlPound = url.indexOf("#");
+    if ( urlPound !== -1 ) {
+        var urlId = url.slice(urlPound + 1);
+        // after getting the id, remove it from the global url var:
+        url = url.slice(0, urlPound);
+        // find the element with the id from the url
+        var startAt = document.getElementById(urlId);
+        // if it's a header, make it active upon loading:
+        if ( isHeader(startAt) ) {
+            makeActive(startAt);
+        }
+    }
 
-// find the first element after <body>:
-var firstElement = document.body.children[0];
-// then make a new div
-var helpDiv = document.createElement("div");
-// and give it a class (if you change the class, make sure to change
-// it in getElements too)
-helpDiv.classList.add("js-infobox");
-// and shove it into the top of the page
-document.body.insertBefore(helpDiv, firstElement);
-// and give it some content:
-helpDiv.innerHTML=helpBoxText;
+    // now add the infobox at the top:
 
-// end window.load event listener
+    var helpBoxText = "<p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><aside><h3>Keyboard shortcuts</h3><ul><li><span class=\"key\">" + String.fromCharCode(keyNext) + " / " + String.fromCharCode(keyPrev) + "</span> next/previous</li><li><span class=\"key\">enter</span> toggle active header</li><li><span class=\"key\">" + String.fromCharCode(keyNextUp) + " / " + String.fromCharCode(keyPrevUp) + "</span> next/previous header (one level up)</li><li><span class=\"key\">" + String.fromCharCode(keyFirst) + " / " + String.fromCharCode(keyLast) + "</span> start/end of document</li><li><span class=\"key\">" + String.fromCharCode(keyAll) + "</span> toggle everything in this section</li><li><span class=\"key\">" + String.fromCharCode(keyExpand) + "</span> expand everything (do this before you search)</li><li><span class=\"key\">" + String.fromCharCode(keyTheme) + "</span> change theme</li></ul></aside>";
+
+    // find the first element after <body>:
+    var firstElement = document.body.children[0];
+    // then make a new div
+    var helpDiv = document.createElement("div");
+    // and give it a class (if you change the class name, make sure to
+    // change it in the `getElements` definition and in
+    // _screen.scss)
+    helpDiv.classList.add("js-infobox");
+    // and shove it into the top of the page
+    document.body.insertBefore(helpDiv, firstElement);
+    // and give it some content:
+    helpDiv.innerHTML=helpBoxText;
+
+    // end window.load event listener
 });
 
 //////////////
 // KEYPRESS //
 //////////////
+
 addListener(window, "keypress", function(key) {
+// do this stuff when a key is pressed:
 
-// http://stackoverflow.com/a/5420482
-key = key || window.event;
-var theKey = key.which || key.keyCode;
+    // http://stackoverflow.com/a/5420482
+    key = key || window.event;
+    var theKey = key.which || key.keyCode;
 
-switch (theKey) {
-    // if they hit [return], toggle the active section:
-    case 13 :
-        toggleHandler( whoIsActive() );
-    break;
-    // if they press "a", collapse all headers at the same level as
-    // the active header:
-    case keyAll :
-        var active = whoIsActive();
-        if ( isHeader(active) ) {
-            toggleHandler(document.getElementsByTagName(active.tagName));
-        }
-    break;
-    // if they pressed 'j' then move down one:
+    switch (theKey) {
+        // if they hit return/enter, toggle the active section:
+        case 13 :
+            toggleHandler( whoIsActive() );
+        break;
+        // if they press "a", collapse all headers at the same level
+        // as the active header:
+        case keyAll :
+            var active = whoIsActive();
+            if ( isHeader(active) ) {
+                toggleHandler(document.getElementsByTagName(active.tagName));
+            }
+        break;
+        // if they pressed 'j' then move down one:
     case keyNext :
         makeActive(elemRelativeToActive(visible, true, 1));
-    break;
-    // if they press 'k' go up:
+        break;
+        // if they press 'k' go up:
     case keyPrev :
         makeActive(elemRelativeToActive(visible, false, 1));
-    break;
-    // if they press "u", go to the first visible header:
+        break;
+        // if they press "u", go to the first visible element:
     case keyFirst :
         makeActive(visible[0]);
-    break;
-    // if they press "m" go to the last visible header:
+        break;
+        // if they press "m" go to the last visible element:
     case keyLast :
         makeActive(visible[visible.length - 1]);
-    break;
-    // if they press "i", go to the previous header that's a level up:
+        break;
+        // if they press "i", go to the previous header that's a level up:
     case keyPrevUp :
         makeActive(elemOneLevelUp(false));
-    break;
-    // if they press "o" go to the next header that's a level up:
+        break;
+        // if they press "o" go to the next header that's a level up:
     case keyNextUp :
         makeActive(elemOneLevelUp(true));
-    break;
-    // if they press "f", expand everything
-    // (this is a useful feature I guess, but it also has to be
-    // activated before the user tries to search; hence being bound to
-    // "f".  This is more a work-around than an actual solution,
-    // obvs):
+        break;
+        // if they press "f", expand everything
+        // (this is a useful feature I guess, but it also has to be
+        // activated before the user tries to search; hence being bound to
+        // "f".  This is more a work-around than an actual solution,
+        // obvs):
     case keyExpand :
         while ( isAnythingHidden(visible) ) {
             for ( var f = 0; f < visible.length; f++ ) {
@@ -180,8 +183,8 @@ switch (theKey) {
                 }
             }
         }
-    break;
-    // press "s" to change the theme
+        break;
+        // press "s" to change the theme
     case keyTheme :
         var html = document.documentElement;
         if ( html.classList.contains("high") ) {
@@ -196,8 +199,8 @@ switch (theKey) {
             html.classList.toggle("dark");
             html.classList.toggle("high");
         }
-    break;
-}
+        break;
+    }
 
 // end window.keypress event listener
 });
@@ -253,15 +256,15 @@ function toggleHandler(what) {
         toggleSame();
     }
 
+    // make sure we're scrolled to the active element:
     var theActive = whoIsActive();
-    
     makeActive(theActive);
     
     // repopulate arrays:
     headers = getElements(true, headerList, true);
     visible = getElements(false, scrollSkip, true);
 
-// end toggleHandler
+    // end toggleHandler definition
 }
 
 function toggleMe(who) {
@@ -276,9 +279,9 @@ function toggleMe(who) {
             // value; it's used to determine how much stuff gets
             // expanded or collapsed
             var stop = compareHeaders(i, elements, headerNum);
-            ////////////////////////////////////////
-            // IF THE HEADER IS COLLAPSED, WE EXPAND
-            ////////////////////////////////////////
+            ///////////////////////////////////////////
+            // IF THE HEADER IS COLLAPSED, WE EXPAND //
+            ///////////////////////////////////////////
             if ( isCollapsed(who) ) {
                 toggleCollapse(who);
                 // starting a new counter to go through the elements
@@ -315,8 +318,10 @@ function toggleMe(who) {
                     }
                 }
             }
-            // if the active header is not collapsed, collapse it and
-            // its "children":
+            ////////////////////////////////////////////////////////
+            // IF THE ACTIVE HEADER IS NOT COLLAPSED, COLLAPSE IT //
+            // AND ITS "CHILDREN":                                //
+            ////////////////////////////////////////////////////////
             else {
                 toggleCollapse(who);
                 var h = i + 1;
@@ -325,18 +330,17 @@ function toggleMe(who) {
                     h++;
                 }
             }
-
             // probably don't have to break it here, but maybe it will
             // run faster if it doesn't have to go through the rest of
             // the page elements:
             break;
         }
     }
-// end function
+    // end `toggleMe` definition
 }
 
-// toggle all headers of the same level as the active:
 function toggleSame() {
+    // toggle all headers of the same level as the active:
     var active = whoIsActive();
     var activeHeaderName = active.tagName;
     // are we toggling all <h1>s?
@@ -398,6 +402,7 @@ function toggleSame() {
             }
         }
     }
+    // end `toggleSame` definition
 }
 
 ////////////////////
@@ -426,6 +431,7 @@ function compareHeaders(counter, array, headerNum) {
             }
         }
     }
+    // end `compareHeaders` definition
 }
 
 function isCollapsed(thing) {
@@ -457,7 +463,6 @@ function whoIsActive() {
     return document.getElementsByClassName("active")[0];
 }
 
-// well, IS anything hidden?
 function isAnythingHidden(things) {
     if ( things.length === undefined ) {
         return things.classList.contains("collapsed");
@@ -573,6 +578,7 @@ var matches = [];
         }
     }
     return matches;
+    // end `getElements` definition
 }
 
 function isHeader(tag) {
