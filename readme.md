@@ -90,6 +90,9 @@ thanks to a
 work there after all.  (Oh, and the same thing happens in Opera.  But
 who uses Opera?)
 
+Some browser extensions add invisible elements to webpages; this can
+screw up keyboard navigation.
+
 ## "License"
 
 This software may be used for any purpose whatever, but with no
