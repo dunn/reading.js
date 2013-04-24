@@ -15,6 +15,22 @@ body {
   }
 }
 
+/* http://unstoppablerobotninja.com/entry/fluid-images/ */
+// /* needs width: 100% in IE stylesheet */
+img,
+object,
+iframe {
+  max-width: 100%;
+}
+img {
+  margin: .5em .5em .5em 0;
+  height: auto;
+  border: $box-border solid black;
+  @media screen and (max-width: $break2-width) {
+    float: none;
+  }
+}
+
 button {
   @include border-radius(4px);
   vertical-align: middle;
