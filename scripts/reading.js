@@ -221,6 +221,7 @@
     // toggleHandler checks what's being toggled, and in turn calls
     // toggleMe or toggleSame:
     function toggleHandler(event) {
+        console.log("toggleHandler commencing");
         var handlerStart = new Date();
 
         var toggleTarget = event.target;
@@ -275,86 +276,89 @@
         // end toggleHandler definition
 
         var handlerEnd = new Date();
+        console.log("toggleHandler ending");
         console.log("toggleHandler time: " + (handlerEnd - handlerStart));
     }
 
     function toggleMe(who) {
-        // first we use this `for` loop to locate ourselves in the
-        // document
+        console.log("toggleMe commencing");
         var meStart = new Date();
-        for ( var i = 0; i < numberOfElements; i++ ) {
-            // ok, we've located ourselves:
-            if ( elements[i] === who ) {
-                // get the number of the header (h1 => 1, h2 => 2, etc)
-                var headerNum = getHeaderNum(who);
-                // this variable holds the next header of greater or equal
-                // value; it's used to determine how much stuff gets
-                // expanded or collapsed
-                var stop = compareHeaders(i, elements, headerNum);
-                ///////////////////////////////////////////
-                // IF THE HEADER IS COLLAPSED, WE EXPAND //
-                ///////////////////////////////////////////
-                if ( isCollapsed(who) ) {
-                    toggleCollapse(who);
-                    // starting a new counter to go through the elements
-                    // array and figure out what needs to be unhidden and
-                    // what headers need to lose the "collapsed" class:
-                    var r = i + 1;
-                    while ( elements[r] !== stop && elements[r] !== undefined ) {
-                        // if the first element we come across is not a
-                        // header element, then unhide it and increment
-                        // the new counter:
-                        if ( ! isHeader(elements[r]) ) {
-                            elements[r].classList.remove("hidden");
+
+        var elementIndex = 0;
+        while (who !== elements[elementIndex]) {
+            elementIndex++;
+        }
+        // get the number of the header (h1 => 1, h2 => 2, etc)
+        var headerNum = getHeaderNum(who);
+        // this variable holds the next header of greater or equal
+        // value; it's used to determine how much stuff gets
+        // expanded or collapsed
+        var stop = compareHeaders(elementIndex, elements, headerNum);
+        console.log(stop);
+        ///////////////////////////////////////////
+        // IF THE HEADER IS COLLAPSED, WE EXPAND //
+        ///////////////////////////////////////////
+        if ( isCollapsed(who) ) {
+            toggleCollapse(who);
+            // starting a new counter to go through the elements
+            // array and figure out what needs to be unhidden and
+            // what headers need to lose the "collapsed" class:
+            var r = elementIndex + 1;
+            while ( elements[r] !== stop && elements[r] !== undefined ) {
+                // if the first element we come across is not a
+                // header element, then unhide it and increment
+                // the new counter:
+                if ( ! isHeader(elements[r]) ) {
+                    elements[r].classList.remove("hidden");
+                    r++;
+                }
+                else {
+                    // if the element IS a header, then, if it
+                    // DOESN'T have the "collapsed" class, unhide
+                    // it and increment the counter:
+                    if ( !isCollapsed(elements[r]) ) {
+                        elements[r].classList.remove("hidden");
+                        r++;
+                    }
+                    // if the header IS "collapsed", then unhide
+                    // it BUT skip everything past it (until we
+                    // get to another header):
+                    else {
+                        var rTagNum = getHeaderNum(elements[r]);
+                        var rStop = compareHeaders(r, elements, rTagNum);
+                        elements[r].classList.remove("hidden");
+                        while ( elements[r] !== rStop && elements[r] !== undefined ) {
                             r++;
                         }
-                        else {
-                            // if the element IS a header, then, if it
-                            // DOESN'T have the "collapsed" class, unhide
-                            // it and increment the counter:
-                            if ( !isCollapsed(elements[r]) ) {
-                                elements[r].classList.remove("hidden");
-                                r++;
-                            }
-                            // if the header IS "collapsed", then unhide
-                            // it BUT skip everything past it (until we
-                            // get to another header):
-                            else {
-                                var rTagNum = getHeaderNum(elements[r]);
-                                var rStop = compareHeaders(r, elements, rTagNum);
-                                elements[r].classList.remove("hidden");
-                                while ( elements[r] !== rStop && elements[r] !== undefined ) {
-                                    r++;
-                                }
-                            }
-                        }
                     }
                 }
-                ////////////////////////////////////////////////////////
-                // IF THE ACTIVE HEADER IS NOT COLLAPSED, COLLAPSE IT //
-                // AND ITS "CHILDREN":                                //
-                ////////////////////////////////////////////////////////
-                else {
-                    toggleCollapse(who);
-                    var h = i + 1;
-                    while ( elements[h] !== stop && elements[h] !== undefined ) {
-                        elements[h].classList.add("hidden");
-                        h++;
-                    }
-                }
-                // probably don't have to break it here, but maybe it will
-                // run faster if it doesn't have to go through the rest of
-                // the page elements:
-                break;
+            }
+        }
+        ////////////////////////////////////////////////////////
+        // IF THE ACTIVE HEADER IS NOT COLLAPSED, COLLAPSE IT //
+        // AND ITS "CHILDREN":                                //
+        ////////////////////////////////////////////////////////
+        else {
+            console.log("HERP");
+            console.log(who);
+//            toggleCollapse(who);
+            var h = elementIndex + 1;
+            while ( elements[h] !== stop && elements[h] !== undefined ) {
+                console.log(elements[h]);
+                //elements[h].classList.add("hidden");
+                h++;
             }
         }
         // end `toggleMe` definition
         var meEnd = new Date();
+        console.log("toggleMe ending");
         console.log("toggleMe() time: " + (meEnd - meStart));
     }
 
     function toggleSame() {
+        console.log("toggleSame commencing");
         var sameStart = new Date();
+
         // toggle all headers of the same level as the active:
         var active = whoIsActive();
         var activeHeaderName = active.tagName;
@@ -419,6 +423,7 @@
         }
         // end `toggleSame` definition
         var sameEnd = new Date();
+        console.log("toggleSame ending");
         console.log("toggleSame time: " + (sameEnd - sameStart));
     }
 
@@ -600,10 +605,11 @@
                 }
             }
         }
-        return matches;
         // end `getElements` definition
         var getEnd = new Date();
         console.log("getElements() time: " + (getEnd - getStart));
+
+        return matches;
     }
 
     function isHeader(tag) {
