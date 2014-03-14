@@ -15,6 +15,7 @@
 
     // this array will be populated with document.body.children
     var elements = [];
+    var numberOfElements;
 
     // this array is populated with the header elements in the document,
     // so we don't have to cycle through every element every time
@@ -58,6 +59,7 @@
 
         // populate the elements array (without the infobox):
         elements = document.body.children;
+        numberOfElements = elements.length;
 
         // get every element except for the <header>:
         visible = getElements(false, scrollSkip, true);
@@ -218,16 +220,17 @@
 
     // toggleHandler checks what's being toggled, and in turn calls
     // toggleMe or toggleSame:
-    function toggleHandler(what) {
+    function toggleHandler(event) {
+        var handlerStart = new Date();
 
-        var headerTarget;
+        var toggleTarget = event.target;
 
         // if toggleHandler was called by a keypress, then whatever
         // function that called toggleHandler has already passed the
         // correct element(s) to the function, so we don't need to do
         // much:
-        if ( ! isClick(what) ) {
-            headerTarget = what;
+        if ( ! isClick(event) ) {
+            toggleTarget = event;
         }
 
         // if something was clicked, we need to figure out what:
@@ -235,29 +238,27 @@
             clearActive();
             // if it was the header that was clicked, just return that
             // element:
-            if ( isHeader(what.target) ) {
-                headerTarget = what.target;
-                headerTarget.classList.add("active");
+            if ( isHeader(toggleTarget) ) {
+                event.target.classList.add("active");
             }
             // otherwise, see if it it was the "all" button:
-            else if ( what.target.classList.contains("all") ) {
+            else if ( toggleTarget.classList.contains("all") ) {
                 // if so, return an array of all the headers at that
                 // level:
-                headerTarget = document.getElementsByTagName(what.target.parentElement.tagName);
-                what.target.parentElement.classList.add("active");
+                toggleTarget = document.getElementsByTagName(event.target.parentElement.tagName);
+                event.target.parentElement.classList.add("active");
             }
             else {
                 // if it was something else clicked (the "this" button),
                 // then just return the header parent:
-                headerTarget = what.target.parentElement;
-                headerTarget.classList.add("active");
+                toggleTarget.parentElement.classList.add("active");
             }
         }
 
         // is it just one header, or an array?  If it's not an array it
         // won't have a defined length:
-        if ( headerTarget.length === undefined && isHeader(headerTarget) ) {
-            toggleMe(headerTarget);
+        if ( toggleTarget.length === undefined && isHeader(toggleTarget) ) {
+            toggleMe(toggleTarget);
         }
         else {
             toggleSame();
@@ -272,12 +273,16 @@
         visible = getElements(false, scrollSkip, true);
 
         // end toggleHandler definition
+
+        var handlerEnd = new Date();
+        console.log("toggleHandler time: " + (handlerEnd - handlerStart));
     }
 
     function toggleMe(who) {
         // first we use this `for` loop to locate ourselves in the
         // document
-        for ( var i = 0; i < elements.length; i++ ) {
+        var meStart = new Date();
+        for ( var i = 0; i < numberOfElements; i++ ) {
             // ok, we've located ourselves:
             if ( elements[i] === who ) {
                 // get the number of the header (h1 => 1, h2 => 2, etc)
@@ -344,9 +349,12 @@
             }
         }
         // end `toggleMe` definition
+        var meEnd = new Date();
+        console.log("toggleMe() time: " + (meEnd - meStart));
     }
 
     function toggleSame() {
+        var sameStart = new Date();
         // toggle all headers of the same level as the active:
         var active = whoIsActive();
         var activeHeaderName = active.tagName;
@@ -410,6 +418,8 @@
             }
         }
         // end `toggleSame` definition
+        var sameEnd = new Date();
+        console.log("toggleSame time: " + (sameEnd - sameStart));
     }
 
     ////////////////////
@@ -420,12 +430,13 @@
     // that's at the same level or higher (i.e., if the active header is
     // h3, it will return the next h3, h2, or h1---whichever comes first):
     function compareHeaders(counter, array, headerNum) {
+        var compStart = new Date();
         // 'counter' is the count var for whatever current `for` loop is
         // running:
         for ( var i = counter + 1; i < array.length; i++ ) {
             // return document.body.lastChild if there are no more headers
             if ( i === array.length - 1) {
-                return elements[elements.length];
+                return elements[numberOfElements];
             }
             // look at each header after the targetHeader; stop and return
             // that header if it's the same size or bigger than the
@@ -439,6 +450,9 @@
             }
         }
         // end `compareHeaders` definition
+        var compEnd = new Date();
+        console.log("compareHeaders() time: " + (compEnd - compStart));
+
     }
 
     function isCollapsed(thing) {
@@ -565,13 +579,15 @@
     // only elements that aren't class="hidden" get returned, and
     // vice-versa if false
     function getElements(fromTheArray, refArray, visibleOnly) {
+        var getStart = new Date();
+
         // set up a counter; this will be used to build the array of header
         // elements:
         var counter = 0;
         var matches = [];
         // move through the array that contains every element and see
         // which elements are matches
-        for ( var i = 0; i < elements.length; i++ ) {
+        for ( var i = 0; i < numberOfElements; i++ ) {
             // don't include the infobox in the array of visible
             // headers:
             if ( !elements[i].parentElement.classList.contains("js-infobox") && !elements[i].classList.contains("js-infobox") ) {
@@ -586,6 +602,8 @@
         }
         return matches;
         // end `getElements` definition
+        var getEnd = new Date();
+        console.log("getElements() time: " + (getEnd - getStart));
     }
 
     function isHeader(tag) {
@@ -599,6 +617,7 @@
                 return true;
             }
         }
+        return false;
     }
 
     // end
