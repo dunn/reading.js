@@ -15,21 +15,7 @@
 
     // this array will be populated with document.body.children
     var elements = [];
-    var numberOfElements;
-
-    // this array is populated with the header elements in the document,
-    // so we don't have to cycle through every element every time
-    var headers = [];
-
-    // `visible` holds the visible elements after an expansion or collapse
-    // ("visible" means it doesn't have `class="hidden"`)
-    var visible = [];
-
-    // unicode symbols for button icons
-    var iconThis = "←";
-    var iconAll = "↕";
-
-    var headerLinks = " <button class='this' title='Collapse this section'>" + iconThis + "</button> <button class='all' title='Collapse all sections at this level'>" + iconAll + "</button>";
+    var bear;
 
     // keyCode/charCode variables
     var keyNext = 106;
@@ -54,36 +40,53 @@
     addListener(window, "load", function() {
         // do this stuff when the `window.load` event fires:
 
+        // unicode symbols for button icons
+        var iconThis = "←";
+        var iconAll = "↕";
+
+        var headerLinks = " <button class='this' title='Collapse this section'>" + iconThis + "</button> <button class='all' title='Collapse all sections at this level'>" + iconAll + "</button>";
+
         // default to the first theme
         document.documentElement.classList.add(themes[0]);
 
         // populate the elements array (without the infobox):
         elements = document.body.children;
-        numberOfElements = elements.length;
 
         // get every element except for the <header>:
-        visible = getElements(false, scrollSkip, true);
-
+        // visible = getElements(false, scrollSkip, true);
         // get the <h1>, <h2> etc headers:
-        headers = getElements(true, headerList, false);
+        // headers = getElements(true, headerList, false);
+        // build a bear
+        var bear = buildABear();
+
+        // append some cute buttons:
+        var pointer = bear.numberOfElements - 1;
+        var bearPoint = bear[pointer];
+        while ( pointer-- ) {
+            if (bearPoint.tag === "H1" || bearPoint.tag === "H2" || bearPoint.tag === "H3" || bearPoint.tag === "H4" || bearPoint.tag === "H5" || bearPoint.tag === "H6") {
+                elements[pointer + 1].innerHTML += headerLinks;
+                // and add an event listener:
+                addListener(elements[pointer + 1], "click", toggleHandler);
+            }
+            bearPoint = bear[pointer];
+        }
 
         // make the first header active, but don't scroll to it:
-        headers[0].classList.add("active");
-
-        for ( var i = 0; i < headers.length; i++ ) {
-            // append some cute buttons:
-            headers[i].innerHTML += headerLinks;
-
-            // and add an event listener:
-            addListener(headers[i], "click", toggleHandler);
+        // headers[0].classList.add("active");
+        pointer = 0;
+        bearPoint = bear[pointer];
+        while ( (pointer < bear.numberOfElements) && (bearPoint.tag !== ("H1" || "H2" || "H3" || "H4" || "H5" || "H6") ) ) {
+            pointer++;
+            bearPoint = bear[pointer];
         }
+        elements[pointer].classList.add("active");
 
         // make the first header the target of the "skip to content link"
         // in the infobox.  if it doesn't already have an id, give it one:
-        var firstHId = headers[0].getAttribute("id");
+        var firstHId = elements[pointer].getAttribute("id");
         var startId;
         if ( firstHId === null ) {
-            headers[0].setAttribute("id", "startOfContent");
+            elements[pointer].setAttribute("id", "startOfContent");
             startId = "startOfContent";
         }
         else {
@@ -272,7 +275,7 @@
 
         // recount elements
         elements = document.body.children;
-        numberOfElements = elements.length;
+        bear.numberOfElements = elements.length;
         // headers = getElements(true, headerList, true);
         // visible = getElements(false, scrollSkip, true);
 
@@ -306,7 +309,7 @@
             // array and figure out what needs to be unhidden and
             // what headers need to lose the "collapsed" class:
             var r = elementIndex + 1;
-            while ( r !== stop && r < numberOfElements ) {
+            while ( r !== stop && r < bear.numberOfElements ) {
                 // if the first element we come across is not a
                 // header element, then unhide it and increment
                 // the new counter:
@@ -329,7 +332,7 @@
                         var rTagNum = getHeaderNum(elements[r]);
                         var rStop = compareHeaders(r, rTagNum);
                         elements[r].classList.remove("hidden");
-                        while ( r !== rStop && r < numberOfElements ) {
+                        while ( r !== rStop && r < bear.numberOfElements ) {
                             r++;
                         }
                     }
@@ -345,7 +348,7 @@
             console.log(who);
             toggleCollapse(who);
             var h = elementIndex + 1;
-            while ( h !== stop && h < numberOfElements ) {
+            while ( h !== stop && h < bear.numberOfElements ) {
                 elements[h].classList.add("hidden");
                 h++;
             }
@@ -364,7 +367,7 @@
         var active = whoIsActive();
         var activeHeaderName = active.tagName;
         // are we toggling all <h1>s?
-        if ( activeHeaderName === "H1" ) {
+        if ( false && activeHeaderName === "H1" ) {
             var h1s = document.getElementsByTagName("H1");
             var h1Len = h1s.length;
             toggleMe(active);
@@ -389,39 +392,47 @@
         else if ( isHeader(active) ) {
             toggleMe(active);
             var activeNum = getHeaderNum(active);
-            for ( var b = 0; b < headers.length; b++ ) {
-                if ( headers[b] === active ) {
-                    var c = b - 1;
-                    while ( getHeaderNum(headers[c]) >= activeNum ) {
-                        var curNum = getHeaderNum(headers[c]);
-                        if ( isCollapsed(active) ) {
-                            if ( !isCollapsed(headers[c]) && curNum === activeNum ) {
-                                toggleMe(headers[c]);
+            for ( var b = 0; b < bear.numberOfElements; b++ ) {
+                var bearPoint = bear[b];
+                // if we haven't hit a dead-end AND it's a header element AND it's the right number ...
+                if ( (b < bear.numberOfElements) && (bearPoint.tag === ("H1" || "H2" || "H3" || "H4" || "H5" || "H6")) && (activeNum === bearPoint.tag.slice(1)) ) {
+                    // only then hit the DOM to see if it's a match
+                    if ( elements[b] === active ) {
+                        // thanks past self for not explaining why -1
+                        var c = b - 1;
+                        bearPoint = bear[c];
+                        while ( bearPoint.tag.slice(1) >= activeNum ) {
+                            var curNum = bearPoint.tag.slice(1);
+                            if ( isCollapsed(active) ) {
+                                if ( !isCollapsed(elements[c]) && curNum === activeNum ) {
+                                    toggleMe(elements[c]);
+                                }
                             }
-                        }
-                        else {
-                            if ( isCollapsed(headers[c]) && curNum === activeNum ) {
-                                toggleMe(headers[c]);
+                            else {
+                                if ( isCollapsed(elements[c]) && curNum === activeNum ) {
+                                    toggleMe(elements[c]);
+                                }
                             }
+                            c--;
                         }
-                        c--;
+                        var d = b + 1;
+                        bearPoint = bear[d];
+                        while ( bearPoint.tag.slice(1) >= activeNum ) {
+                            var curNum2 = bearPoint.tag.slice(1);
+                            if ( isCollapsed(active) ) {
+                                if ( !isCollapsed(elements[d]) && curNum2 === activeNum ) {
+                                    toggleMe(elements[d]);
+                                }
+                            }
+                            else {
+                                if ( isCollapsed(elements[d]) && curNum2 === activeNum ) {
+                                    toggleMe(elements[d]);
+                                }
+                            }
+                            d++;
+                        }
+                        break;
                     }
-                    var d = b + 1;
-                    while ( getHeaderNum(headers[d]) >= activeNum ) {
-                        var curNum2 = getHeaderNum(headers[d]);
-                        if ( isCollapsed(active) ) {
-                            if ( !isCollapsed(headers[d]) && curNum2 === activeNum ) {
-                                toggleMe(headers[d]);
-                            }
-                        }
-                        else {
-                            if ( isCollapsed(headers[d]) && curNum2 === activeNum ) {
-                                toggleMe(headers[d]);
-                            }
-                        }
-                        d++;
-                    }
-                    break;
                 }
             }
         }
@@ -441,7 +452,7 @@
     function compareHeaders(start, headerNum) {
         var compStart = new Date();
         var compEnd;
-        while ( start++ < numberOfElements - 1 ) {
+        while ( start++ < bear.numberOfElements - 1 ) {
             // look at each header after the targetHeader; stop and return
             // that header if it's the same size or bigger than the
             // targetHeader.  Using '<' not '>' because smaller is bigger
@@ -452,7 +463,7 @@
             }
         }
         // if we reach this point it means there are no matches
-        return numberOfElements;
+        return bear.numberOfElements;
 
         // end `compareHeaders` definition
     }
@@ -474,6 +485,7 @@
                 return who.tagName.slice(1);
             }
         }
+        return;
     }
 
     // just returns true if the the argument passed was a click event:
@@ -574,39 +586,28 @@
         }
     }
 
-    // `fromTheArray` and `visibleOnly` are booleans; `refArray` is an
-    // array of tag names.  if `fromTheArray` is true, only elements whose
-    // tagNames match the refArray are returned; if it is false, only
-    // elements who DON'T match get returned.  if `visibleOnly` is true,
-    // only elements that aren't class="hidden" get returned, and
-    // vice-versa if false
-    function getElements(fromTheArray, refArray, visibleOnly) {
+    // make a skeletal map of the direct children of <body>
+    function buildABear() {
         var getStart = new Date();
 
-        // set up a counter; this will be used to build the array of header
-        // elements:
-        var counter = 0;
-        var matches = [];
-        // move through the array that contains every element and see
-        // which elements are matches
-        for ( var i = 0; i < numberOfElements; i++ ) {
-            // don't include the infobox in the array of visible
-            // headers:
-            if ( !elements[i].parentElement.classList.contains("js-infobox") && !elements[i].classList.contains("js-infobox") ) {
-                if ( (fromTheArray && isOneOf(elements[i].tagName, refArray)) || (!fromTheArray && !isOneOf(elements[i].tagName, refArray)) ) {
-                    if ( !visibleOnly || (visibleOnly && !elements[i].classList.contains("hidden")) ) {
-                        // and add the element to the header-only array:
-                        matches[counter] = elements[i];
-                        counter++;
-                    }
-                }
-            }
+        var source = document.body.children;
+        var sourceLen = document.body.childElementCount;
+
+        var bear = {numberOfElements: sourceLen};
+
+        while ( sourceLen-- ) {
+            bear[sourceLen] = {};
+            var tempBear = bear[sourceLen];
+
+            tempBear.tag = source[sourceLen].tagName;
+            tempBear.classes = source[sourceLen].classList.toString().split(' ');
+
         }
-        // end `getElements` definition
         var getEnd = new Date();
         console.log("getElements() time: " + (getEnd - getStart));
 
-        return matches;
+        // end `buildABear` definition
+        return bear;
     }
 
     function isHeader(tag) {
