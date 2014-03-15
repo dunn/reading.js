@@ -62,12 +62,13 @@
         // append some cute buttons:
         var pointer = bear.numberOfElements - 1;
         var bearPoint = bear[pointer];
-        while ( pointer-- ) {
-            if (bearPoint.tag === "H1" || bearPoint.tag === "H2" || bearPoint.tag === "H3" || bearPoint.tag === "H4" || bearPoint.tag === "H5" || bearPoint.tag === "H6") {
-                elements[pointer + 1].innerHTML += headerLinks;
+        while ( pointer ) {
+            if (bearPoint.tag === ("H1" || "H2" || "H3" || "H4" || "H5" || "H6")) {
+                elements[pointer].innerHTML += headerLinks;
                 // and add an event listener:
-                addListener(elements[pointer + 1], "click", toggleHandler);
+                addListener(elements[pointer], "click", toggleHandler);
             }
+            pointer--;
             bearPoint = bear[pointer];
         }
 
