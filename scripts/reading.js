@@ -101,8 +101,9 @@
             url = url.slice(0, urlPound);
             // find the element with the id from the url
             var startAt = document.getElementById(urlId);
-            // if it's a header, make it active upon loading:
-            if ( isHeader(startAt) ) {
+            // if it's a header, make it active upon loading,
+            // but check if getElementById worked also:
+            if ( startAt && isHeader(startAt) ) {
                 makeActive(startAt);
             }
         }
@@ -269,9 +270,11 @@
         var theActive = whoIsActive();
         makeActive(theActive);
 
-        // repopulate arrays:
-        headers = getElements(true, headerList, true);
-        visible = getElements(false, scrollSkip, true);
+        // recount elements
+        elements = document.body.children;
+        numberOfElements = elements.length;
+        // headers = getElements(true, headerList, true);
+        // visible = getElements(false, scrollSkip, true);
 
         // end toggleHandler definition
 
@@ -293,8 +296,7 @@
         // this variable holds the next header of greater or equal
         // value; it's used to determine how much stuff gets
         // expanded or collapsed
-        var stop = compareHeaders(elementIndex, elements, headerNum);
-        console.log(stop);
+        var stop = compareHeaders(elementIndex, headerNum);
         ///////////////////////////////////////////
         // IF THE HEADER IS COLLAPSED, WE EXPAND //
         ///////////////////////////////////////////
@@ -304,7 +306,7 @@
             // array and figure out what needs to be unhidden and
             // what headers need to lose the "collapsed" class:
             var r = elementIndex + 1;
-            while ( elements[r] !== stop && elements[r] !== undefined ) {
+            while ( r !== stop && r < numberOfElements ) {
                 // if the first element we come across is not a
                 // header element, then unhide it and increment
                 // the new counter:
@@ -325,9 +327,9 @@
                     // get to another header):
                     else {
                         var rTagNum = getHeaderNum(elements[r]);
-                        var rStop = compareHeaders(r, elements, rTagNum);
+                        var rStop = compareHeaders(r, rTagNum);
                         elements[r].classList.remove("hidden");
-                        while ( elements[r] !== rStop && elements[r] !== undefined ) {
+                        while ( r !== rStop && r < numberOfElements ) {
                             r++;
                         }
                     }
@@ -339,13 +341,12 @@
         // AND ITS "CHILDREN":                                //
         ////////////////////////////////////////////////////////
         else {
-            console.log("HERP");
+            console.log("target header is:");
             console.log(who);
-//            toggleCollapse(who);
+            toggleCollapse(who);
             var h = elementIndex + 1;
-            while ( elements[h] !== stop && elements[h] !== undefined ) {
-                console.log(elements[h]);
-                //elements[h].classList.add("hidden");
+            while ( h !== stop && h < numberOfElements ) {
+                elements[h].classList.add("hidden");
                 h++;
             }
         }
@@ -365,19 +366,22 @@
         // are we toggling all <h1>s?
         if ( activeHeaderName === "H1" ) {
             var h1s = document.getElementsByTagName("H1");
+            var h1Len = h1s.length;
             toggleMe(active);
-            if ( ! isCollapsed(active) ) {
-                for ( var i = 0; i < h1s.length; i++ ) {
+            if ( !isCollapsed(active) ) {
+                for ( var i = 0; i < h1Len; i++ ) {
                     if ( h1s[i] !== active && isCollapsed(h1s[i]) ) {
                         toggleMe(h1s[i]);
                     }
                 }
             }
             else {
-                for ( var k = 0; k < h1s.length; k++ ) {
-                    if ( h1s[k] !== active && ! isCollapsed(h1s[k]) ) {
-                        toggleMe(h1s[k]);
-                    }
+                var k = h1Len;
+                while ( k-- > 1 ) {
+                    // if ( h1s[k] !== active && !isCollapsed(h1s[k]) ) {
+                    //     toggleMe(h1s[k]);
+                    // }
+                    console.log(h1s[k]);
                 }
             }
         }
@@ -434,30 +438,23 @@
     // this function finds the active header, then returns the next header
     // that's at the same level or higher (i.e., if the active header is
     // h3, it will return the next h3, h2, or h1---whichever comes first):
-    function compareHeaders(counter, array, headerNum) {
+    function compareHeaders(start, headerNum) {
         var compStart = new Date();
-        // 'counter' is the count var for whatever current `for` loop is
-        // running:
-        for ( var i = counter + 1; i < array.length; i++ ) {
-            // return document.body.lastChild if there are no more headers
-            if ( i === array.length - 1) {
-                return elements[numberOfElements];
-            }
+        var compEnd;
+        while ( start++ < numberOfElements - 1 ) {
             // look at each header after the targetHeader; stop and return
             // that header if it's the same size or bigger than the
             // targetHeader.  Using '<' not '>' because smaller is bigger
             // (h1 < h6):
-            else {
-                if ( isHeader(array[i]) && (array[i].tagName.slice(1)) <= headerNum ) {
-                    // return the header match
-                    return array[i];
-                }
+            if ( isHeader(elements[start]) && (elements[start].tagName.slice(1)) <= headerNum ) {
+                // return the match number
+                return start;
             }
         }
-        // end `compareHeaders` definition
-        var compEnd = new Date();
-        console.log("compareHeaders() time: " + (compEnd - compStart));
+        // if we reach this point it means there are no matches
+        return numberOfElements;
 
+        // end `compareHeaders` definition
     }
 
     function isCollapsed(thing) {
