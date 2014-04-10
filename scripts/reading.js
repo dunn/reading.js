@@ -10,7 +10,7 @@
     var headerList = [ "H1", "H2", "H3", "H4", "H5", "H6" ];
     // these are excluded from the array of elements that can be made
     // active (by scrolling with j/k and other keys):
-    var scrollSkip = [ "HEADER", "HR" ];
+    var scrollSkip = [ "DIV", "HEADER", "HR" ];
 
     // this array will be populated with document.body.children
     var elements = [];
@@ -165,12 +165,13 @@
             // if they press "u", go to the first visible element:
         case keyFirst :
             var y = 0;
-            while ( y++ ) {
+            while ( true ) {
                 console.log(bear[y].tag);
                 if ( !isOneOf(bear[y].tag, scrollSkip) ) {
                     makeActive(elements[y]);
                     break;
                 }
+                y++;
             }
             break;
             // if they press "m" go to the last visible element:
@@ -229,6 +230,7 @@
             }
             break;
         }
+        bear = buildABear();
         // end window.keypress event listener
     });
 
@@ -502,22 +504,28 @@
 
     function indexRelativeToActive(direction, num) {
         var down = direction === "down";
-        for ( var i = 0; i < bear.numberOfElements; i++ ) {
-            if ( isOneOf("active", bear[i].classes) ) {
-                // ref.length - 1 so we can't scroll beyond the last
-                // header:
-                if ( down && i < ( bear.numberOfElements - 1) ) {
-                    return i + num;
-                }
-                // i > 0 so we can't go up beyond the first header:
-                else if ( !down && i > 0 ) {
-                    return i - num;
-                }
-                // if we don't break it will loop forever
-                break;
+        var i = activeIndex(bear);
+
+        if ( down ) {
+            i = i + num;
+            while ( bear[i] &&
+                    (isOneOf(bear[i].tag, scrollSkip) ||
+                    isOneOf("collapsed", bear[i].classes)) ) {
+                i++;
             }
+            return ( (i < bear.numberOfElements) ? i : activeIndex(bear));
         }
-        return false;
+        else {
+            i = i - num;
+            while ( bear[i] ) {
+                if (isOneOf(bear[i].tag, scrollSkip) ||
+                    isOneOf("collapsed", bear[i].classes) ) {
+                    i--;
+                }
+            }
+            // i > 0 so we can't go up beyond the first header:
+            return ( i > 0 ? i : activeIndex(bear));
+        }
     }
 
     function headerOneLevelUp(direction) {
