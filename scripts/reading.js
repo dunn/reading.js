@@ -1,5 +1,4 @@
-// written by Alex Dunn in 2012
-
+// copyright (c) 2012--2014 Alex Dunn
 (function() {
     "use strict";
 
@@ -52,33 +51,28 @@
         // populate the elements array (without the infobox):
         elements = document.body.children;
 
-        // get every element except for the <header>:
-        // visible = getElements(false, scrollSkip, true);
-        // get the <h1>, <h2> etc headers:
-        // headers = getElements(true, headerList, false);
         // build a bear
-        var bear = buildABear();
+        bear = buildABear();
 
         // append some cute buttons:
         var pointer = bear.numberOfElements - 1;
-        var bearPoint = bear[pointer];
+        // var bearPoint = bear[pointer];
         while ( pointer ) {
-            if (bearPoint.tag === ("H1" || "H2" || "H3" || "H4" || "H5" || "H6")) {
+            if ( isHeaderTag(bear[pointer].tag) ) {
                 elements[pointer].innerHTML += headerLinks;
                 // and add an event listener:
                 addListener(elements[pointer], "click", toggleHandler);
             }
             pointer--;
-            bearPoint = bear[pointer];
+            // bear[pointer] = bear[pointer];
         }
 
         // make the first header active, but don't scroll to it:
-        // headers[0].classList.add("active");
         pointer = 0;
-        bearPoint = bear[pointer];
-        while ( (pointer < bear.numberOfElements) && (bearPoint.tag !== ("H1" || "H2" || "H3" || "H4" || "H5" || "H6") ) ) {
+        // bear[pointer] = bear[pointer];
+        while ( (pointer < bear.numberOfElements) && (bear[pointer].tag !== ("H1" || "H2" || "H3" || "H4" || "H5" || "H6") ) ) {
             pointer++;
-            bearPoint = bear[pointer];
+            // bear[pointer] = bear[pointer];
         }
         elements[pointer].classList.add("active");
 
@@ -107,7 +101,7 @@
             var startAt = document.getElementById(urlId);
             // if it's a header, make it active upon loading,
             // but check if getElementById worked also:
-            if ( startAt && isHeader(startAt) ) {
+            if ( startAt && isHeaderTag(startAt.tagName) ) {
                 makeActive(startAt);
             }
         }
@@ -128,6 +122,12 @@
         document.body.insertBefore(helpDiv, firstElement);
         // and give it some content:
         helpDiv.innerHTML=helpBoxText;
+
+        // repopulate the elements array
+        elements = document.body.children;
+
+        // rebuild the bear
+        bear = buildABear();
 
         // end window.load event listener
     });
@@ -152,7 +152,7 @@
             // as the active header:
         case keyAll :
             var active = whoIsActive();
-            if ( isHeader(active) ) {
+            if ( isHeaderTag(active.tagName) ) {
                 toggleHandler(document.getElementsByTagName(active.tagName));
             }
             break;
@@ -229,12 +229,13 @@
         console.log("toggleHandler commencing");
         var handlerStart = new Date();
 
-        var toggleTarget = event.target;
+        var toggleTarget;
 
         // if toggleHandler was called by a keypress, then whatever
         // function that called toggleHandler has already passed the
         // correct element(s) to the function, so we don't need to do
         // much:
+
         if ( ! isClick(event) ) {
             toggleTarget = event;
         }
@@ -244,11 +245,12 @@
             clearActive();
             // if it was the header that was clicked, just return that
             // element:
-            if ( isHeader(toggleTarget) ) {
+            if ( isHeaderTag(event.target.tagName) ) {
+                toggleTarget = event.target;
                 event.target.classList.add("active");
             }
             // otherwise, see if it it was the "all" button:
-            else if ( toggleTarget.classList.contains("all") ) {
+            else if ( event.target.classList.contains("all") ) {
                 // if so, return an array of all the headers at that
                 // level:
                 toggleTarget = document.getElementsByTagName(event.target.parentElement.tagName);
@@ -257,13 +259,14 @@
             else {
                 // if it was something else clicked (the "this" button),
                 // then just return the header parent:
-                toggleTarget.parentElement.classList.add("active");
+                toggleTarget = event.target.parentElement;
+                toggleTarget.classList.add("active");
             }
         }
 
         // is it just one header, or an array?  If it's not an array it
         // won't have a defined length:
-        if ( toggleTarget.length === undefined && isHeader(toggleTarget) ) {
+        if ( toggleTarget.length === undefined && isHeaderTag(toggleTarget.tagName) ) {
             toggleMe(toggleTarget);
         }
         else {
@@ -276,9 +279,8 @@
 
         // recount elements
         elements = document.body.children;
-        bear.numberOfElements = elements.length;
-        // headers = getElements(true, headerList, true);
-        // visible = getElements(false, scrollSkip, true);
+        // rebuild the bear
+        bear = buildABear();
 
         // end toggleHandler definition
 
@@ -291,20 +293,22 @@
         console.log("toggleMe commencing");
         var meStart = new Date();
 
-        var elementIndex = 0;
-        while (who !== elements[elementIndex]) {
-            elementIndex++;
-        }
+        var elementIndex = elemNumber(who, bear.numberOfElements);
+
         // get the number of the header (h1 => 1, h2 => 2, etc)
-        var headerNum = getHeaderNum(who);
+        var headerNum = bear[elementIndex].tag.slice(1);
+
         // this variable holds the next header of greater or equal
         // value; it's used to determine how much stuff gets
         // expanded or collapsed
         var stop = compareHeaders(elementIndex, headerNum);
+
         ///////////////////////////////////////////
         // IF THE HEADER IS COLLAPSED, WE EXPAND //
         ///////////////////////////////////////////
-        if ( isCollapsed(who) ) {
+        console.log(bear[elementIndex].classes);
+        if ( isOneOf("collapsed", bear[elementIndex].classes) ) {
+            console.log("BORBORBORBORR");
             toggleCollapse(who);
             // starting a new counter to go through the elements
             // array and figure out what needs to be unhidden and
@@ -314,7 +318,7 @@
                 // if the first element we come across is not a
                 // header element, then unhide it and increment
                 // the new counter:
-                if ( ! isHeader(elements[r]) ) {
+                if ( !isHeaderTag(bear[r].tag) ) {
                     elements[r].classList.remove("hidden");
                     r++;
                 }
@@ -322,7 +326,7 @@
                     // if the element IS a header, then, if it
                     // DOESN'T have the "collapsed" class, unhide
                     // it and increment the counter:
-                    if ( !isCollapsed(elements[r]) ) {
+                    if ( !isOneOf("collapsed", bear[r].classes) ) {
                         elements[r].classList.remove("hidden");
                         r++;
                     }
@@ -330,7 +334,7 @@
                     // it BUT skip everything past it (until we
                     // get to another header):
                     else {
-                        var rTagNum = getHeaderNum(elements[r]);
+                        var rTagNum = bear[r].tag.slice(1);
                         var rStop = compareHeaders(r, rTagNum);
                         elements[r].classList.remove("hidden");
                         while ( r !== rStop && r < bear.numberOfElements ) {
@@ -366,76 +370,55 @@
 
         // toggle all headers of the same level as the active:
         var active = whoIsActive();
-        var activeHeaderName = active.tagName;
-        // are we toggling all <h1>s?
-        if ( false && activeHeaderName === "H1" ) {
-            var h1s = document.getElementsByTagName("H1");
-            var h1Len = h1s.length;
-            toggleMe(active);
-            if ( !isCollapsed(active) ) {
-                for ( var i = 0; i < h1Len; i++ ) {
-                    if ( h1s[i] !== active && isCollapsed(h1s[i]) ) {
-                        toggleMe(h1s[i]);
-                    }
-                }
+
+        var activeIndex = elemNumber(active, bear.numberOfElements);
+        var activeHeaderName = bear[activeIndex].tag;
+        var activeIsCollapsed = isOneOf("collapsed", bear[activeIndex].classes);
+
+        toggleMe(active);
+        var activeNum = activeHeaderName.slice(1);
+
+        var b = activeIndex;
+
+        // first walk up, toggling all at the same level
+        var c = b - 1;
+        while ( c &&
+                (!isHeaderTag(bear[c].tag) ||
+                 (bear[c].tag.slice(1) >= activeNum)) ) {
+            console.log('(going up) tag: ' + bear[c].tag);
+            var curNum = bear[c].tag.slice(1);
+            if ( isHeaderTag(bear[c].tag) ) {
+                if ( !activeIsCollapsed &&
+                     !isOneOf("collapsed", bear[c].classes) &&
+                     curNum === activeNum ) {
+                         toggleMe(elements[c]);
+                     }
+                else if ( isOneOf("collapsed", bear[c].classes) &&
+                          curNum === activeNum ) {
+                              toggleMe(elements[c]);
+                          }
             }
-            else {
-                var k = h1Len;
-                while ( k-- > 1 ) {
-                    // if ( h1s[k] !== active && !isCollapsed(h1s[k]) ) {
-                    //     toggleMe(h1s[k]);
-                    // }
-                    console.log(h1s[k]);
-                }
-            }
+            c--;
         }
-        // are we toggling things other than <h1>s?
-        else if ( isHeader(active) ) {
-            toggleMe(active);
-            var activeNum = getHeaderNum(active);
-            for ( var b = 0; b < bear.numberOfElements; b++ ) {
-                var bearPoint = bear[b];
-                // if we haven't hit a dead-end AND it's a header element AND it's the right number ...
-                if ( (b < bear.numberOfElements) && (bearPoint.tag === ("H1" || "H2" || "H3" || "H4" || "H5" || "H6")) && (activeNum === bearPoint.tag.slice(1)) ) {
-                    // only then hit the DOM to see if it's a match
-                    if ( elements[b] === active ) {
-                        // thanks past self for not explaining why -1
-                        var c = b - 1;
-                        bearPoint = bear[c];
-                        while ( bearPoint.tag.slice(1) >= activeNum ) {
-                            var curNum = bearPoint.tag.slice(1);
-                            if ( isCollapsed(active) ) {
-                                if ( !isCollapsed(elements[c]) && curNum === activeNum ) {
-                                    toggleMe(elements[c]);
-                                }
-                            }
-                            else {
-                                if ( isCollapsed(elements[c]) && curNum === activeNum ) {
-                                    toggleMe(elements[c]);
-                                }
-                            }
-                            c--;
-                        }
-                        var d = b + 1;
-                        bearPoint = bear[d];
-                        while ( bearPoint.tag.slice(1) >= activeNum ) {
-                            var curNum2 = bearPoint.tag.slice(1);
-                            if ( isCollapsed(active) ) {
-                                if ( !isCollapsed(elements[d]) && curNum2 === activeNum ) {
-                                    toggleMe(elements[d]);
-                                }
-                            }
-                            else {
-                                if ( isCollapsed(elements[d]) && curNum2 === activeNum ) {
-                                    toggleMe(elements[d]);
-                                }
-                            }
-                            d++;
-                        }
-                        break;
-                    }
-                }
+        // now walk down, toggling all at the same level
+        var d = b + 1;
+        while ( bear[d] &&
+                (!isHeaderTag(bear[d].tag) ||
+                 (bear[d].tag.slice(1) >= activeNum)) ) {
+            console.log('(going down) tag: ' + bear[d].tag);
+            var curNum2 = bear[d].tag.slice(1);
+            if ( isHeaderTag(bear[d].tag) ) {
+                if ( !activeIsCollapsed &&
+                     !isOneOf("collapsed", bear[d].classes) &&
+                     curNum2 === activeNum ) {
+                         toggleMe(elements[d]);
+                     }
+                else if (isOneOf("collapsed", bear[d].classes) &&
+                         curNum2 === activeNum ) {
+                             toggleMe(elements[d]);
+                         }
             }
+            d++;
         }
         // end `toggleSame` definition
         var sameEnd = new Date();
@@ -453,12 +436,16 @@
     function compareHeaders(start, headerNum) {
         var compStart = new Date();
         var compEnd;
-        while ( start++ < bear.numberOfElements - 1 ) {
+
+//        console.log(start + " -> " + headerNum);
+        while ( start++ < bear.numberOfElements ) {
             // look at each header after the targetHeader; stop and return
             // that header if it's the same size or bigger than the
             // targetHeader.  Using '<' not '>' because smaller is bigger
             // (h1 < h6):
-            if ( isHeader(elements[start]) && (elements[start].tagName.slice(1)) <= headerNum ) {
+            if ( bear[start] &&
+                 isHeaderTag(bear[start].tag) &&
+                 (bear[start].tag.slice(1) <= headerNum) ) {
                 // return the match number
                 return start;
             }
@@ -542,8 +529,8 @@
         for ( var k = 0; k < visible.length; k++ ) {
             if ( visible[k] === b ) {
                 for ( var v = (down ? (k+1) : (k-1)); (down ? v < visible.length: v >= 0); (down ? v++ : v--) ) {
-                    if ( isHeader(visible[v]) ) {
-                        if ( (getHeaderNum(b) > getHeaderNum(visible[v])) || !isHeader(b) ) {
+                    if ( isHeaderTag(visible[v].tagName) ) {
+                        if ( (getHeaderNum(b) > getHeaderNum(visible[v])) || !isHeaderTag(b.tagName) ) {
                             return visible[v];
                         }
                     }
@@ -611,8 +598,18 @@
         return bear;
     }
 
-    function isHeader(tag) {
-        var t = tag.tagName;
+    function elemNumber(element, i) {
+        while ( --i ) {
+            if (elements[i] === element) {
+                console.log("elemNumber: " + i);
+                return i;
+            }
+        }
+        return undefined;
+    }
+
+    function isHeaderTag(tag) {
+        var t = tag;
         return ( t === "H1" || t === "H2" || t === "H3" || t === "H4" || t === "H5" || t === "H6" );
     }
 
