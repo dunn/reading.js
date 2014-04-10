@@ -510,18 +510,17 @@
             i = i + num;
             while ( bear[i] &&
                     (isOneOf(bear[i].tag, scrollSkip) ||
-                    isOneOf("collapsed", bear[i].classes)) ) {
+                    isOneOf("hidden", bear[i].classes)) ) {
                 i++;
             }
             return ( (i < bear.numberOfElements) ? i : activeIndex(bear));
         }
         else {
             i = i - num;
-            while ( bear[i] ) {
-                if (isOneOf(bear[i].tag, scrollSkip) ||
-                    isOneOf("collapsed", bear[i].classes) ) {
-                    i--;
-                }
+            while ( bear[i] &&
+                    (isOneOf(bear[i].tag, scrollSkip) ||
+                    isOneOf("hidden", bear[i].classes)) ) {
+                i--;
             }
             // i > 0 so we can't go up beyond the first header:
             return ( i > 0 ? i : activeIndex(bear));
