@@ -156,11 +156,11 @@
             break;
             // if they pressed 'j' then move down one:
         case keyNext :
-            makeActive(elemRelativeToActive("down", 1));
+            makeActive(elements[indexRelativeToActive("down", 1)]);
             break;
             // if they press 'k' go up:
         case keyPrev :
-            makeActive(elemRelativeToActive("up", 1));
+            makeActive(elements[indexRelativeToActive("up", 1)]);
             break;
             // if they press "u", go to the first visible element:
         case keyFirst :
@@ -186,11 +186,11 @@
             break;
             // if they press "i", go to the previous header that's a level up:
         case keyPrevUp :
-            makeActive(headerOneLevelUp(false));
+            makeActive(elements[headerOneLevelUp("up")]);
             break;
             // if they press "o" go to the next header that's a level up:
         case keyNextUp :
-            makeActive(headerOneLevelUp(true));
+            makeActive(elements[headerOneLevelUp("down")]);
             break;
             // if they press "f", expand everything
             // (this is a useful feature I guess, but it also has to be
@@ -198,10 +198,11 @@
             // "f".  This is more a work-around than an actual solution,
             // obvs):
         case keyExpand :
-            while ( isAnythingHidden(visible) ) {
-                for ( var f = 0; f < visible.length; f++ ) {
-                    if ( visible[f].classList.contains("collapsed") ) {
-                        toggleHandler(visible[f]);
+            while ( anythingHidden() ) {
+                var hell = bear.numberOfElements;
+                while ( --hell ) {
+                    if ( isOneOf("collapsed", bear[hell].classes) ) {
+                        toggleHandler(elements[hell]);
                     }
                 }
             }
@@ -485,16 +486,11 @@
         }
     }
 
-    function isAnythingHidden(things) {
-        if ( things.length === undefined ) {
-            return things.classList.contains("collapsed");
-        }
-        else {
-            var anything = 0;
-            for ( var i = 0; i < things.length; i++ ) {
-                if ( things[i].classList.contains("collapsed") ) {
+    function anythingHidden() {
+        var anything = bear.numberOfElements;
+        while ( --anything ) {
+            if ( isOneOf("collapsed", bear[anything].classes) ) {
                     anything++;
-                }
             }
             return ( anything > 0 ? true : false );
         }
@@ -504,39 +500,37 @@
     // ACTIVE/SCROLL FUNCTIONS //
     /////////////////////////////
 
-    function elemRelativeToActive(direction, num) {
+    function indexRelativeToActive(direction, num) {
         var down = direction === "down";
         for ( var i = 0; i < bear.numberOfElements; i++ ) {
-            if ( ref[i].classList.contains("active") ) {
+            if ( isOneOf("active", bear[i].classes) ) {
                 // ref.length - 1 so we can't scroll beyond the last
                 // header:
-                if ( down && i < ( ref.length - 1) ) {
-                    return ref[i + num];
+                if ( down && i < ( bear.numberOfElements - 1) ) {
+                    return i + num;
                 }
                 // i > 0 so we can't go up beyond the first header:
                 else if ( !down && i > 0 ) {
-                    return ref[i - num];
+                    return i - num;
                 }
                 // if we don't break it will loop forever
                 break;
             }
         }
+        return false;
     }
 
-    // `down` is a boolean: true is down, false is up
-    function headerOneLevelUp(down) {
-        var b = whoIsActive();
-        for ( var k = 0; k < visible.length; k++ ) {
-            if ( visible[k] === b ) {
-                for ( var v = (down ? (k+1) : (k-1)); (down ? v < visible.length: v >= 0); (down ? v++ : v--) ) {
-                    if ( isHeaderTag(visible[v].tagName) ) {
-                        if ( (getHeaderNum(b) > getHeaderNum(visible[v])) || !isHeaderTag(b.tagName) ) {
-                            return visible[v];
-                        }
-                    }
+    function headerOneLevelUp(direction) {
+        var down = direction === "down";
+        var k = activeIndex(bear);
+        for ( var v = (down ? (k+1) : (k-1)); (down ? v < bear.numberOfElements: v >= 0); (down ? v++ : v--) ) {
+            if ( isHeaderTag(bear[v].tag) ) {
+                if ( (bear[k].tag.slice(1) > bear[v].tag.slice(1)) ||
+                     !isHeaderTag(bear[k].tag) ) {
+                    return v;
                 }
-                break;
             }
+            break;
         }
     }
 
