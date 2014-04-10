@@ -144,31 +144,45 @@
         switch (theKey) {
             // if they hit return/enter, toggle the active section:
         case 13 :
-            toggleHandler( whoIsActive() );
+            toggleHandler( elements[activeIndex(bear)] );
             break;
             // if they press "a", collapse all headers at the same level
             // as the active header:
         case keyAll :
-            var active = whoIsActive();
-            if ( isHeaderTag(active.tagName) ) {
-                toggleHandler(document.getElementsByTagName(active.tagName));
+            var active = activeIndex(bear);
+            if ( isHeaderTag(bear[active].tag) ) {
+                toggleHandler(document.getElementsByTagName(bear[active].tag));
             }
             break;
             // if they pressed 'j' then move down one:
         case keyNext :
-            makeActive(elemRelativeToActive(visible, true, 1));
+            makeActive(elemRelativeToActive("down", 1));
             break;
             // if they press 'k' go up:
         case keyPrev :
-            makeActive(elemRelativeToActive(visible, false, 1));
+            makeActive(elemRelativeToActive("up", 1));
             break;
             // if they press "u", go to the first visible element:
         case keyFirst :
-            makeActive(visible[0]);
+            var y = 0;
+            while ( y++ ) {
+                console.log(bear[y].tag);
+                if ( !isOneOf(bear[y].tag, scrollSkip) ) {
+                    makeActive(elements[y]);
+                    break;
+                }
+            }
             break;
             // if they press "m" go to the last visible element:
         case keyLast :
-            makeActive(visible[visible.length - 1]);
+            var z = bear.numberOfElements;
+            while ( --z ) {
+                console.log(bear[z].tag);
+                if ( !isOneOf(bear[z].tag, scrollSkip) ) {
+                    makeActive(elements[z]);
+                    break;
+                }
+            }
             break;
             // if they press "i", go to the previous header that's a level up:
         case keyPrevUp :
@@ -240,7 +254,7 @@
 
         // if something was clicked, we need to figure out what:
         else {
-            clearActive();
+            clearActive(elements);
             // if it was the header that was clicked, just return that
             // element:
             if ( isHeaderTag(event.target.tagName) ) {
@@ -272,13 +286,11 @@
         }
 
         // make sure we're scrolled to the active element:
-        var theActive = whoIsActive();
-        makeActive(theActive);
+        var theActive = activeIndex(bear);
+        makeActive(elements[theActive]);
 
         // recount elements
         elements = document.body.children;
-        // rebuild the bear
-        bear = buildABear();
 
         // end toggleHandler definition
 
@@ -352,6 +364,10 @@
                 h++;
             }
         }
+
+        // rebuild the bear
+        bear = buildABear();
+
         // end `toggleMe` definition
         var meEnd = new Date();
         console.log("toggleMe ending");
@@ -363,16 +379,15 @@
         var sameStart = new Date();
 
         // toggle all headers of the same level as the active:
-        var active = whoIsActive();
+        var activeN = activeIndex(bear);
 
-        var activeIndex = elemNumber(active, bear.numberOfElements);
-        var activeHeaderName = bear[activeIndex].tag;
-        var activeIsCollapsed = isOneOf("collapsed", bear[activeIndex].classes);
+        var activeHeaderName = bear[activeN].tag;
+        var activeIsCollapsed = isOneOf("collapsed", bear[activeN].classes);
 
-        toggleMe(active);
+        toggleMe(elements[activeN]);
         var activeNum = activeHeaderName.slice(1);
 
-        var b = activeIndex;
+        var b = activeN;
 
         // first walk up, toggling all at the same level
         var c = b - 1;
@@ -460,9 +475,14 @@
         return ( input.target !== undefined );
     }
 
-    // what is the first (only) element that has `class="active"`?
-    function whoIsActive() {
-        return document.getElementsByClassName("active")[0];
+    // what is the last element that has `class="active"`?
+    function activeIndex(ref) {
+        var i = ref.numberOfElements;
+        while ( --i ) {
+            if ( isOneOf("active", bear[i].classes) ) {
+                return i;
+            }
+        }
     }
 
     function isAnythingHidden(things) {
@@ -484,8 +504,9 @@
     // ACTIVE/SCROLL FUNCTIONS //
     /////////////////////////////
 
-    function elemRelativeToActive(ref, down, num) {
-        for ( var i = 0; i < ref.length; i++ ) {
+    function elemRelativeToActive(direction, num) {
+        var down = direction === "down";
+        for ( var i = 0; i < bear.numberOfElements; i++ ) {
             if ( ref[i].classList.contains("active") ) {
                 // ref.length - 1 so we can't scroll beyond the last
                 // header:
@@ -522,7 +543,7 @@
     function makeActive(me) {
         // uses global var "url"
         if ( me !== undefined ) {
-            clearActive();
+            clearActive(elements);
             me.classList.add("active");
             var id = me.getAttribute("id");
             if ( id !== null ) {
@@ -532,8 +553,11 @@
         }
     }
 
-    function clearActive() {
-        whoIsActive().classList.remove("active");
+    function clearActive(array) {
+        var i = array.length;
+        while ( --i ) {
+            array[i].classList.remove("active");
+        }
     }
 
     /////////////////////
