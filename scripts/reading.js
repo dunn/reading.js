@@ -107,7 +107,6 @@
         }
 
         // now add the infobox at the top:
-
         var helpBoxText = "<p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><aside><h3>Keyboard shortcuts</h3><ul><li><span class=\"key\">" + String.fromCharCode(keyNext) + " / " + String.fromCharCode(keyPrev) + "</span> next/previous</li><li><span class=\"key\">enter</span> toggle active header</li><li><span class=\"key\">" + String.fromCharCode(keyNextUp) + " / " + String.fromCharCode(keyPrevUp) + "</span> next/previous header (one level up)</li><li><span class=\"key\">" + String.fromCharCode(keyFirst) + " / " + String.fromCharCode(keyLast) + "</span> start/end of document</li><li><span class=\"key\">" + String.fromCharCode(keyAll) + "</span> toggle everything in this section</li><li><span class=\"key\">" + String.fromCharCode(keyExpand) + "</span> expand everything (do this before you search)</li><li><span class=\"key\">" + String.fromCharCode(keyTheme) + "</span> change theme</li></ul></aside>";
 
         // find the first element after <body>:
@@ -115,8 +114,7 @@
         // then make a new div
         var helpDiv = document.createElement("div");
         // and give it a class (if you change the class name, make sure to
-        // change it in the `getElements` definition and in
-        // _screen.scss)
+        // change it in _screen.scss)
         helpDiv.classList.add("js-infobox");
         // and shove it into the top of the page
         document.body.insertBefore(helpDiv, firstElement);
@@ -306,9 +304,7 @@
         ///////////////////////////////////////////
         // IF THE HEADER IS COLLAPSED, WE EXPAND //
         ///////////////////////////////////////////
-        console.log(bear[elementIndex].classes);
         if ( isOneOf("collapsed", bear[elementIndex].classes) ) {
-            console.log("BORBORBORBORR");
             toggleCollapse(who);
             // starting a new counter to go through the elements
             // array and figure out what needs to be unhidden and
@@ -349,8 +345,6 @@
         // AND ITS "CHILDREN":                                //
         ////////////////////////////////////////////////////////
         else {
-            console.log("target header is:");
-            console.log(who);
             toggleCollapse(who);
             var h = elementIndex + 1;
             while ( h !== stop && h < bear.numberOfElements ) {
@@ -385,7 +379,6 @@
         while ( c &&
                 (!isHeaderTag(bear[c].tag) ||
                  (bear[c].tag.slice(1) >= activeNum)) ) {
-            console.log('(going up) tag: ' + bear[c].tag);
             var curNum = bear[c].tag.slice(1);
             if ( isHeaderTag(bear[c].tag) ) {
                 if ( !activeIsCollapsed &&
@@ -405,7 +398,6 @@
         while ( bear[d] &&
                 (!isHeaderTag(bear[d].tag) ||
                  (bear[d].tag.slice(1) >= activeNum)) ) {
-            console.log('(going down) tag: ' + bear[d].tag);
             var curNum2 = bear[d].tag.slice(1);
             if ( isHeaderTag(bear[d].tag) ) {
                 if ( !activeIsCollapsed &&
@@ -437,7 +429,6 @@
         var compStart = new Date();
         var compEnd;
 
-//        console.log(start + " -> " + headerNum);
         while ( start++ < bear.numberOfElements ) {
             // look at each header after the targetHeader; stop and return
             // that header if it's the same size or bigger than the
@@ -462,18 +453,6 @@
 
     function toggleCollapse(where) {
         where.classList.toggle("collapsed");
-    }
-
-    function getHeaderNum(who) {
-        if ( who !== undefined ) {
-            if ( who.length !== undefined ) {
-                return who[0].tagName.slice(1);
-            }
-            else {
-                return who.tagName.slice(1);
-            }
-        }
-        return;
     }
 
     // just returns true if the the argument passed was a click event:
@@ -592,7 +571,6 @@
 
         }
         var getEnd = new Date();
-        console.log("getElements() time: " + (getEnd - getStart));
 
         // end `buildABear` definition
         return bear;
@@ -601,7 +579,6 @@
     function elemNumber(element, i) {
         while ( --i ) {
             if (elements[i] === element) {
-                console.log("elemNumber: " + i);
                 return i;
             }
         }
