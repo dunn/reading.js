@@ -247,8 +247,7 @@
         // function that called toggleHandler has already passed the
         // correct element(s) to the function, so we don't need to do
         // much:
-
-        if ( ! isClick(event) ) {
+        if ( event.target === undefined ) {
             toggleTarget = event;
         }
 
@@ -469,17 +468,8 @@
         // end `compareHeaders` definition
     }
 
-    function isCollapsed(thing) {
-        return thing.classList.contains("collapsed");
-    }
-
     function toggleCollapse(where) {
         where.classList.toggle("collapsed");
-    }
-
-    // just returns true if the the argument passed was a click event:
-    function isClick(input) {
-        return ( input.target !== undefined );
     }
 
     // what is the last element that has `class="active"`?
