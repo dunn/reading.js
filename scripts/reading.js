@@ -5,9 +5,6 @@
     // three CSS themes we can switch between
     var themes = ["high", "light", "dark"];
 
-    // just a list to reference when dealing with header elements;
-    // in all caps because I guess javascript likes that?
-    var headerList = [ "H1", "H2", "H3", "H4", "H5", "H6" ];
     // these are excluded from the array of elements that can be made
     // active (by scrolling with j/k and other keys):
     var scrollSkip = [ "DIV", "HEADER", "HR" ];
@@ -156,11 +153,11 @@
             break;
             // if they pressed 'j' then move down one:
         case keyNext :
-            makeActive(elements[indexRelativeToActive("down", 1)]);
+            makeActive(elements[indexRelativeToActive.down(1)]);
             break;
             // if they press 'k' go up:
         case keyPrev :
-            makeActive(elements[indexRelativeToActive("up", 1)]);
+            makeActive(elements[indexRelativeToActive.up(1)]);
             break;
             // if they press "u", go to the first visible element:
         case keyFirst :
@@ -326,7 +323,8 @@
         var index = oneOf("collapsed", bear[elementIndex].classes);
         if ( index > -1 ) {
             toggleCollapse(elements[elementIndex]);
-            bear[elementIndex].classes.splice(index,1);
+            changeClass.remove(bear, elementIndex, "collapsed");
+            //bear[elementIndex].classes.splice(index,1);
             console.log(bear[elementIndex].classes);
             console.log('expanding mode go');
             // starting a new counter to go through the elements
@@ -338,7 +336,8 @@
                 // header element, then unhide it and increment
                 // the new counter:
                 if ( !isHeaderTag(bear[r].tag) ) {
-                    bear[r].classes.splice(index,1);
+                    changeClass.remove(bear, r, "hidden");
+                    // bear[r].classes.splice(index,1);
                     elements[r].classList.remove("hidden");
                     r++;
                 }
@@ -347,7 +346,8 @@
                     // DOESN'T have the "collapsed" class, unhide
                     // it and increment the counter:
                     if ( (oneOf("collapsed", bear[r].classes) < 0) ) {
-                        bear[r].classes.splice(index,1);
+                        changeClass.remove(bear, r, "hidden");
+                        //bear[r].classes.splice(index,1);
                         elements[r].classList.remove("hidden");
                         r++;
                     }
@@ -358,7 +358,8 @@
                         var rTagNum = bear[r].tag.slice(1);
                         var rStop = compareHeaders(r, rTagNum);
                         elements[r].classList.remove("hidden");
-                        bear[r].classes.splice(index,1);
+                        changeClass.remove(bear, r, "hidden");
+                        //bear[r].classes.splice(index,1);
                         while ( r !== rStop && r < bear.numberOfElements ) {
                             r++;
                         }
@@ -373,12 +374,14 @@
         else {
             toggleCollapse(elements[elementIndex]);
             console.log('collapsing mode go');
-            bear[elementIndex].classes.push("collapsed");
+            changeClass.add(bear, elementIndex, "collapsed");
+            // bear[elementIndex].classes.push("collapsed");
             console.log(bear[elementIndex].classes);
             var h = elementIndex + 1;
             while ( h !== stop && h < bear.numberOfElements ) {
                 elements[h].classList.add("hidden");
-                bear[h].classes.push("hidden");
+                changeClass.add(bear, h, "hidden");
+                // bear[h].classes.push("hidden");
                 console.log(bear[h].classes);
                 h++;
             }
@@ -483,6 +486,21 @@
         where.classList.toggle("collapsed");
     }
 
+    var changeClass = {
+        add: function(bear, i, classname) {
+            if ( oneOf(classname, bear[i].classes) < 0) {
+                bear[i].classes.push(classname);
+            }
+        },
+        remove: function(bear, i, classname) {
+            var index = oneOf(classname, bear[i].classes);
+            if ( index > -1 ) {
+                bear[i].classes.splice(index,1);
+            }
+        }
+    };
+
+
     // what is the last element that has `class="active"`?
     function activeIndex(ref) {
         var i = ref.numberOfElements;
@@ -510,11 +528,9 @@
     // ACTIVE/SCROLL FUNCTIONS //
     /////////////////////////////
 
-    function indexRelativeToActive(direction, num) {
-        var down = direction === "down";
-        var i = activeIndex(bear);
-
-        if ( down ) {
+    var indexRelativeToActive = {
+        down: function(num) {
+            var i = activeIndex(bear);
             i = i + num;
             while ( bear[i] &&
                     ( (oneOf(bear[i].tag, scrollSkip) > -1) ||
@@ -522,8 +538,9 @@
                 i++;
             }
             return ( (i < bear.numberOfElements) ? i : activeIndex(bear));
-        }
-        else {
+        },
+        up: function(num) {
+            var i = activeIndex(bear);
             i = i - num;
             while ( bear[i] &&
                     ( (oneOf(bear[i].tag, scrollSkip) > -1) ||
@@ -533,7 +550,7 @@
             // i > 0 so we can't go up beyond the first header:
             return ( i > 0 ? i : activeIndex(bear));
         }
-    }
+    };
 
     function headerOneLevelUp(direction) {
         var down = direction === "down";
@@ -555,7 +572,8 @@
         if ( me !== undefined ) {
             clearActive(elements, bear, bear.numberOfElements);
             elements[meep].classList.add("active");
-            bear[meep].classes.push("active");
+            changeClass.add(bear, meep, "active");
+            //bear[meep].classes.push("active");
             var id = elements[meep].getAttribute("id");
             if ( id !== null ) {
                 window.location.replace(url + "#" + id);
