@@ -281,7 +281,7 @@
 
         // is it just one header, or an array?  If it's not an array it
         // won't have a defined length:
-        if ( toggleTarget.length === undefined && isHeaderTag(toggleTarget.tagName) ) {
+        if ( event.target.length === undefined && isHeaderTag(event.target.tagName) ) {
             toggleMe(toggleTarget);
         }
         else {
@@ -382,15 +382,13 @@
         var sameStart = new Date();
 
         // toggle all headers of the same level as the active:
-        var activeN = activeIndex(bear);
+        var b = activeIndex(bear);
 
-        var activeHeaderName = bear[activeN].tag;
-        var activeIsCollapsed = isOneOf("collapsed", bear[activeN].classes);
-
-        toggleMe(elements[activeN]);
+        var activeHeaderName = bear[b].tag;
+        var activeIsCollapsed = isOneOf("collapsed", bear[b].classes);
         var activeNum = activeHeaderName.slice(1);
 
-        var b = activeN;
+        toggleMe(elements[b]);
 
         // first walk up, toggling all at the same level
         var c = b - 1;
