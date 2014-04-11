@@ -166,7 +166,7 @@
         case keyFirst :
             var y = 1;
             while ( y++ < bear.numberOfElements ) {
-                if ( isOneOf(bear[y-2].tag, scrollSkip) === -1 ) {
+                if ( oneOf(bear[y-2].tag, scrollSkip) === -1 ) {
                     makeActive(elements[y-2]);
                     break;
                 }
@@ -176,7 +176,7 @@
         case keyLast :
             var z = bear.numberOfElements;
             while ( --z ) {
-                if ( isOneOf(bear[z].tag, scrollSkip) === -1 ) {
+                if ( oneOf(bear[z].tag, scrollSkip) === -1 ) {
                     makeActive(elements[z]);
                     break;
                 }
@@ -199,7 +199,7 @@
             while ( anythingHidden() ) {
                 var hell = bear.numberOfElements;
                 while ( --hell ) {
-                    if ( isOneOf("collapsed", bear[hell].classes) !== -1 ) {
+                    if ( oneOf("collapsed", bear[hell].classes) !== -1 ) {
                         toggleHandler(elements[hell]);
                     }
                 }
@@ -323,7 +323,7 @@
         ///////////////////////////////////////////
         // IF THE HEADER IS COLLAPSED, WE EXPAND //
         ///////////////////////////////////////////
-        var index = isOneOf("collapsed", bear[elementIndex].classes);
+        var index = oneOf("collapsed", bear[elementIndex].classes);
         if ( index > -1 ) {
             toggleCollapse(elements[elementIndex]);
             bear[elementIndex].classes.splice(index,1);
@@ -346,7 +346,7 @@
                     // if the element IS a header, then, if it
                     // DOESN'T have the "collapsed" class, unhide
                     // it and increment the counter:
-                    if ( (isOneOf("collapsed", bear[r].classes) < 0) ) {
+                    if ( (oneOf("collapsed", bear[r].classes) < 0) ) {
                         bear[r].classes.splice(index,1);
                         elements[r].classList.remove("hidden");
                         r++;
@@ -395,7 +395,7 @@
         var sameStart = new Date();
 
         var activeHeaderName = bear[b].tag;
-        var activeIsCollapsed = isOneOf("collapsed", bear[b].classes);
+        var activeIsCollapsed = oneOf("collapsed", bear[b].classes);
         var activeNum = activeHeaderName.slice(1);
 
         toggleMe(bear, b);
@@ -408,12 +408,12 @@
             var curNum = bear[c].tag.slice(1);
             if ( isHeaderTag(bear[c].tag) ) {
                 if ( !activeIsCollapsed &&
-                     (isOneOf("collapsed", bear[c].classes) < 0) &&
+                     (oneOf("collapsed", bear[c].classes) < 0) &&
                      curNum === activeNum ) {
                          console.log("toggling a: " + curNum);
                          toggleMe(bear, c);
                      }
-                else if ( (isOneOf("collapsed", bear[c].classes) > -1) &&
+                else if ( (oneOf("collapsed", bear[c].classes) > -1) &&
                           curNum === activeNum ) {
                               console.log("toggling a: " + curNum);
                               toggleMe(bear, c);
@@ -429,14 +429,14 @@
             var curNum2 = bear[d].tag.slice(1);
             if ( isHeaderTag(bear[d].tag) ) {
                 if ( !activeIsCollapsed &&
-                     (isOneOf("collapsed", bear[d].classes < 0) ) &&
+                     (oneOf("collapsed", bear[d].classes < 0) ) &&
                      curNum2 === activeNum ) {
                          console.log("toggling a: " + curNum2);
                          toggleMe(bear, d);
                      }
 
 
-                else if ( (isOneOf("collapsed", bear[d].classes) > -1 ) &&
+                else if ( (oneOf("collapsed", bear[d].classes) > -1 ) &&
                          curNum2 === activeNum ) {
                              console.log("toggling a: " + curNum2);
                              toggleMe(bear, d);
@@ -487,7 +487,7 @@
     function activeIndex(ref) {
         var i = ref.numberOfElements;
         while ( --i ) {
-            if ( isOneOf("active", ref[i].classes) > -1 ) {
+            if ( oneOf("active", ref[i].classes) > -1 ) {
                 console.log(ref[i].classes);
                 console.log('found an active element: ' + ref[i].tag);
                 console.log(elements[i]);
@@ -499,7 +499,7 @@
     function anythingHidden() {
         var anything = bear.numberOfElements;
         while ( --anything ) {
-            if ( isOneOf("collapsed", bear[anything].classes) > -1 ) {
+            if ( oneOf("collapsed", bear[anything].classes) > -1 ) {
                     anything++;
             }
             return ( anything > 0 ? true : false );
@@ -517,8 +517,8 @@
         if ( down ) {
             i = i + num;
             while ( bear[i] &&
-                    ( (isOneOf(bear[i].tag, scrollSkip) > -1) ||
-                      (isOneOf("hidden", bear[i].classes) > -1) ) ) {
+                    ( (oneOf(bear[i].tag, scrollSkip) > -1) ||
+                      (oneOf("hidden", bear[i].classes) > -1) ) ) {
                 i++;
             }
             return ( (i < bear.numberOfElements) ? i : activeIndex(bear));
@@ -526,8 +526,8 @@
         else {
             i = i - num;
             while ( bear[i] &&
-                    ( (isOneOf(bear[i].tag, scrollSkip) > -1) ||
-                      (isOneOf("hidden", bear[i].classes) > -1) ) ) {
+                    ( (oneOf(bear[i].tag, scrollSkip) > -1) ||
+                      (oneOf("hidden", bear[i].classes) > -1) ) ) {
                 i--;
             }
             // i > 0 so we can't go up beyond the first header:
@@ -567,7 +567,7 @@
     function clearActive(array, ref, i) {
         var index;
         while ( --i ) {
-            index = isOneOf("active", ref[i].classes);
+            index = oneOf("active", ref[i].classes);
             if ( index > -1 ) {
                 console.log('found active elements:');
                 console.log(ref[i].tag);
@@ -635,7 +635,7 @@
         return ( t === "H1" || t === "H2" || t === "H3" || t === "H4" || t === "H5" || t === "H6" );
     }
 
-    function isOneOf(thing, array) {
+    function oneOf(thing, array) {
         for ( var i = 0; i < array.length; i++ ) {
             if ( thing === array[i] ) {
                 console.log(thing + ' is part of ' + array);
