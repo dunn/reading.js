@@ -164,14 +164,13 @@
             break;
             // if they press "u", go to the first visible element:
         case keyFirst :
-            var y = 0;
-            while ( true ) {
-                console.log(bear[y].tag);
-                if ( !isOneOf(bear[y].tag, scrollSkip) ) {
-                    makeActive(elements[y]);
+            var y = 1;
+            while ( y++ < bear.numberOfElements ) {
+                console.log(bear[y-2].tag);
+                if ( !isOneOf(bear[y-2].tag, scrollSkip) ) {
+                    makeActive(elements[y-2]);
                     break;
                 }
-                y++;
             }
             break;
             // if they press "m" go to the last visible element:
