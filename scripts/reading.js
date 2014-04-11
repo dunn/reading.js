@@ -166,7 +166,6 @@
         case keyFirst :
             var y = 1;
             while ( y++ < bear.numberOfElements ) {
-                console.log(bear[y-2].tag);
                 if ( !isOneOf(bear[y-2].tag, scrollSkip) ) {
                     makeActive(elements[y-2]);
                     break;
@@ -177,7 +176,6 @@
         case keyLast :
             var z = bear.numberOfElements;
             while ( --z ) {
-                console.log(bear[z].tag);
                 if ( !isOneOf(bear[z].tag, scrollSkip) ) {
                     makeActive(elements[z]);
                     break;
@@ -240,7 +238,7 @@
     // toggleHandler checks what's being toggled, and in turn calls
     // toggleMe or toggleSame:
     function toggleHandler(event) {
-        console.log("toggleHandler commencing");
+//        console.log("toggleHandler commencing");
         var handlerStart = new Date();
 
         var toggleTarget;
@@ -257,6 +255,7 @@
         // if something was clicked, we need to figure out what:
         else {
             clearActive(elements, bear, bear.numberOfElements);
+            console.log('active item at: ' + activeIndex(bear));
             // if it was the header that was clicked, just return that
             // element:
             if ( isHeaderTag(event.target.tagName) ) {
@@ -288,6 +287,7 @@
         }
 
         // make sure we're scrolled to the active element:
+
         var theActive = activeIndex(bear);
         makeActive(elements[theActive]);
 
@@ -297,12 +297,12 @@
         // end toggleHandler definition
 
         var handlerEnd = new Date();
-        console.log("toggleHandler ending");
-        console.log("toggleHandler time: " + (handlerEnd - handlerStart));
+//        console.log("toggleHandler ending");
+//        console.log("toggleHandler time: " + (handlerEnd - handlerStart));
     }
 
     function toggleMe(who) {
-        console.log("toggleMe commencing");
+//        console.log("toggleMe commencing");
         var meStart = new Date();
 
         var elementIndex = elemNumber(who, bear.numberOfElements);
@@ -372,12 +372,12 @@
 
         // end `toggleMe` definition
         var meEnd = new Date();
-        console.log("toggleMe ending");
-        console.log("toggleMe() time: " + (meEnd - meStart));
+//        console.log("toggleMe ending");
+//        console.log("toggleMe() time: " + (meEnd - meStart));
     }
 
     function toggleSame() {
-        console.log("toggleSame commencing");
+//        console.log("toggleSame commencing");
         var sameStart = new Date();
 
         // toggle all headers of the same level as the active:
@@ -436,8 +436,8 @@
         }
         // end `toggleSame` definition
         var sameEnd = new Date();
-        console.log("toggleSame ending");
-        console.log("toggleSame time: " + (sameEnd - sameStart));
+//        console.log("toggleSame ending");
+//        console.log("toggleSame time: " + (sameEnd - sameStart));
     }
 
     ////////////////////
@@ -487,6 +487,8 @@
         var i = ref.numberOfElements;
         while ( --i ) {
             if ( isOneOf("active", bear[i].classes) ) {
+                console.log('found');
+                console.log(elements[i]);
                 return i;
             }
         }
@@ -559,9 +561,12 @@
     }
 
     function clearActive(array, ref, i) {
+        var index;
         while ( --i ) {
-            if ( isOneOf("active", ref[i].classes) ) {
+            index = isOneOf("active", ref[i].classes);
+            if ( index > -1 ) {
                 array[i].classList.remove("active");
+                ref[i].classes.splice(index,1);
             }
         }
     }
@@ -623,10 +628,10 @@
     function isOneOf(thing, array) {
         for ( var i = 0; i < array.length; i++ ) {
             if ( thing === array[i] ) {
-                return true;
+                return i;
             }
         }
-        return false;
+        return 0;
     }
 
     // end
