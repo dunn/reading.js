@@ -236,7 +236,7 @@
     // toggleMe or toggleSame:
     function toggleHandler(event) {
         //console.log("toggleHandler commencing");
-        var handlerStart = new Date();
+//        var handlerStart = new Date();
 
         clearActive(elements, bear, bear.numberOfElements);
 
@@ -289,14 +289,14 @@
 
         // end toggleHandler definition
 
-        var handlerEnd = new Date();
+  //      var handlerEnd = new Date();
         //console.log("toggleHandler ending");
         //console.log("toggleHandler time: " + (handlerEnd - handlerStart));
     }
 
     function toggleMe(bear, who) {
         //console.log("toggleMe commencing");
-        var meStart = new Date();
+//        var meStart = new Date();
 
         var elementIndex = who;
 
@@ -379,14 +379,14 @@
         }
 
         // end `toggleMe` definition
-        var meEnd = new Date();
+//        var meEnd = new Date();
         //console.log("toggleMe ending");
         //console.log("toggleMe() time: " + (meEnd - meStart));
     }
 
     function toggleSame(bear, b) {
         //console.log("toggleSame commencing");
-        var sameStart = new Date();
+//        var sameStart = new Date();
 
         var activeHeaderName = bear[b].tag;
         var activeIsCollapsed = oneOf("collapsed", bear[b].classes);
@@ -407,8 +407,6 @@
                  (bear[c].tag.slice(1) >= activeNum)) ) {
             var curNum = bear[c].tag.slice(1);
             if ( isHeaderTag(bear[c].tag) ) {
-                console.log('activecollapsed? ' + activeIsCollapsed);
-                console.log('bear[' + c + '] is collapsed? ' + oneOf("collapsed", bear[c].classes));
                 if ( activeIsCollapsed &&
                      (oneOf("collapsed", bear[c].classes) < 0) &&
                      curNum === activeNum ) {
@@ -450,7 +448,7 @@
             d++;
         }
         // end `toggleSame` definition
-        var sameEnd = new Date();
+//        var sameEnd = new Date();
         //console.log("toggleSame ending");
         //console.log("toggleSame time: " + (sameEnd - sameStart));
     }
@@ -463,7 +461,7 @@
     // that's at the same level or higher (i.e., if the active header is
     // h3, it will return the next h3, h2, or h1---whichever comes first):
     function compareHeaders(start, headerNum) {
-        var compStart = new Date();
+//        var compStart = new Date();
         var compEnd;
 
         while ( start++ < bear.numberOfElements ) {
@@ -613,7 +611,7 @@
 
     // make a skeletal map of the direct children of <body>
     function buildABear() {
-        var getStart = new Date();
+//        var getStart = new Date();
 
         var source = document.body.children;
         var sourceLen = document.body.childElementCount;
@@ -629,7 +627,7 @@
             // source[sourceLen].classList.toString() !== "" ? //console.log(source[sourceLen].tagName + ', ' + source[sourceLen].classList.toString().split(' ')) : 0 ;
 
         }
-        var getEnd = new Date();
+//        var getEnd = new Date();
 
         // end `buildABear` definition
         //console.log('bear build with: ' + bear.numberOfElements + ' elements');
