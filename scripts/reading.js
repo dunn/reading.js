@@ -235,7 +235,7 @@
     // toggleHandler checks what's being toggled, and in turn calls
     // toggleMe or toggleSame:
     function toggleHandler(event) {
-        console.log("toggleHandler commencing");
+        //console.log("toggleHandler commencing");
         var handlerStart = new Date();
 
         clearActive(elements, bear, bear.numberOfElements);
@@ -249,68 +249,60 @@
         // index:
         if ( !event.target ) {
             targetIndex = elemNumber(event, bear.numberOfElements);
-            console.log('keypress detected');
+            //console.log('keypress detected');
         }
-
         // if something was clicked, we need to figure out what:
         else {
             // if it was the header that was clicked, just return that
             // element:
             if ( isHeaderTag(event.target.tagName) ) {
-                console.log('header clicked');
+                //console.log('header clicked');
                 targetIndex = elemNumber(event.target, bear.numberOfElements);
-                event.target.classList.add("active");
             }
             // otherwise, see if it it was the "all" button:
             else {
-                console.log('button clicked');
+                //console.log('button clicked');
                 targetIndex = elemNumber(event.target.parentElement, bear.numberOfElements);
-                event.target.parentElement.classList.add("active");
                 if ( event.target.classList.contains("all") ) {
-                    console.log('all button');
+                    //console.log('all button');
                     toggleMode = "batch";
                 }
             }
         }
-
-
-        // temp
-        bear = buildABear();
+        elements[targetIndex].classList.add("active");
+        changeClass.add(bear, targetIndex, "active");
 
         if ( toggleMode !== "batch" ) {
-            console.log('beginning non-batch mode');
+            //console.log('beginning non-batch mode');
             toggleMe(bear, targetIndex);
         }
         else {
-            console.log('beginning batch mode');
+            //console.log('beginning batch mode');
             toggleSame(bear, targetIndex);
         }
 
         // make sure we're scrolled to the active element:
 
         var theActive = activeIndex(bear);
-        //console.log(bear[theActive]);
+        //console.log(theActive);
         makeActive(elements[theActive]);
-
-        // recount elements
-        elements = document.body.children;
 
         // end toggleHandler definition
 
         var handlerEnd = new Date();
-        console.log("toggleHandler ending");
-        console.log("toggleHandler time: " + (handlerEnd - handlerStart));
+        //console.log("toggleHandler ending");
+        //console.log("toggleHandler time: " + (handlerEnd - handlerStart));
     }
 
     function toggleMe(bear, who) {
-        console.log("toggleMe commencing");
+        //console.log("toggleMe commencing");
         var meStart = new Date();
 
         var elementIndex = who;
 
         // get the number of the header (h1 => 1, h2 => 2, etc)
         var headerNum = bear[elementIndex].tag.slice(1);
-        console.log('toggling a H' + headerNum);
+        //console.log('toggling a H' + headerNum);
 
         // this variable holds the next header of greater or equal
         // value; it's used to determine how much stuff gets
@@ -321,12 +313,13 @@
         // IF THE HEADER IS COLLAPSED, WE EXPAND //
         ///////////////////////////////////////////
         var index = oneOf("collapsed", bear[elementIndex].classes);
+        console.log(elements[elementIndex]);
         if ( index > -1 ) {
             toggleCollapse(elements[elementIndex]);
             changeClass.remove(bear, elementIndex, "collapsed");
-            //bear[elementIndex].classes.splice(index,1);
-            console.log(bear[elementIndex].classes);
+            //console.log(bear[elementIndex].classes);
             console.log('expanding mode go');
+            console.log(bear[elementIndex].classes);
             // starting a new counter to go through the elements
             // array and figure out what needs to be unhidden and
             // what headers need to lose the "collapsed" class:
@@ -375,32 +368,36 @@
             toggleCollapse(elements[elementIndex]);
             console.log('collapsing mode go');
             changeClass.add(bear, elementIndex, "collapsed");
-            // bear[elementIndex].classes.push("collapsed");
             console.log(bear[elementIndex].classes);
             var h = elementIndex + 1;
             while ( h !== stop && h < bear.numberOfElements ) {
                 elements[h].classList.add("hidden");
                 changeClass.add(bear, h, "hidden");
-                // bear[h].classes.push("hidden");
-                console.log(bear[h].classes);
+                // //console.log(bear[h].classes);
                 h++;
             }
         }
 
         // end `toggleMe` definition
         var meEnd = new Date();
-        console.log("toggleMe ending");
-        console.log("toggleMe() time: " + (meEnd - meStart));
+        //console.log("toggleMe ending");
+        //console.log("toggleMe() time: " + (meEnd - meStart));
     }
 
     function toggleSame(bear, b) {
-        console.log("toggleSame commencing");
+        //console.log("toggleSame commencing");
         var sameStart = new Date();
 
         var activeHeaderName = bear[b].tag;
         var activeIsCollapsed = oneOf("collapsed", bear[b].classes);
         var activeNum = activeHeaderName.slice(1);
 
+        if ( activeIsCollapsed ) {
+            changeClass.remove(bear, b, "collapsed");
+        }
+        else {
+            changeClass.add(bear, b, "collapsed");
+        }
         toggleMe(bear, b);
 
         // first walk up, toggling all at the same level
@@ -410,16 +407,21 @@
                  (bear[c].tag.slice(1) >= activeNum)) ) {
             var curNum = bear[c].tag.slice(1);
             if ( isHeaderTag(bear[c].tag) ) {
-                if ( !activeIsCollapsed &&
+                console.log('activecollapsed? ' + activeIsCollapsed);
+                console.log('bear[' + c + '] is collapsed? ' + oneOf("collapsed", bear[c].classes));
+                if ( activeIsCollapsed &&
                      (oneOf("collapsed", bear[c].classes) < 0) &&
                      curNum === activeNum ) {
-                         console.log("toggling a: " + curNum);
+                         //console.log("toggling a: " + curNum);
                          toggleMe(bear, c);
+                         //changeClass.remove(bear, c, "collapsed");
                      }
+                // collapsing?
                 else if ( (oneOf("collapsed", bear[c].classes) > -1) &&
                           curNum === activeNum ) {
-                              console.log("toggling a: " + curNum);
+                              //console.log("toggling a: " + curNum);
                               toggleMe(bear, c);
+                              //changeClass.add(bear, c, "collapsed");
                           }
             }
             c--;
@@ -431,26 +433,26 @@
                  (bear[d].tag.slice(1) >= activeNum)) ) {
             var curNum2 = bear[d].tag.slice(1);
             if ( isHeaderTag(bear[d].tag) ) {
-                if ( !activeIsCollapsed &&
+                if ( activeIsCollapsed &&
                      (oneOf("collapsed", bear[d].classes < 0) ) &&
                      curNum2 === activeNum ) {
-                         console.log("toggling a: " + curNum2);
                          toggleMe(bear, d);
+                         //changeClass.remove(bear, d, "collapsed");
                      }
 
 
                 else if ( (oneOf("collapsed", bear[d].classes) > -1 ) &&
                          curNum2 === activeNum ) {
-                             console.log("toggling a: " + curNum2);
                              toggleMe(bear, d);
+                             //changeClass.add(bear, d, "collapsed");
                          }
             }
             d++;
         }
         // end `toggleSame` definition
         var sameEnd = new Date();
-        console.log("toggleSame ending");
-        console.log("toggleSame time: " + (sameEnd - sameStart));
+        //console.log("toggleSame ending");
+        //console.log("toggleSame time: " + (sameEnd - sameStart));
     }
 
     ////////////////////
@@ -490,12 +492,14 @@
         add: function(bear, i, classname) {
             if ( oneOf(classname, bear[i].classes) < 0) {
                 bear[i].classes.push(classname);
+//                console.log(bear[i] + ' now has ' + bear[i].classes);
             }
         },
         remove: function(bear, i, classname) {
             var index = oneOf(classname, bear[i].classes);
             if ( index > -1 ) {
                 bear[i].classes.splice(index,1);
+//                console.log(bear[i] + ' now has ' + bear[i].classes);
             }
         }
     };
@@ -506,9 +510,9 @@
         var i = ref.numberOfElements;
         while ( --i ) {
             if ( oneOf("active", ref[i].classes) > -1 ) {
-                console.log(ref[i].classes);
-                console.log('found an active element: ' + ref[i].tag);
-                console.log(elements[i]);
+                //console.log(ref[i].classes);
+                //console.log('found an active element: ' + ref[i].tag);
+                //console.log(elements[i]);
                 return i;
             }
         }
@@ -567,18 +571,21 @@
     }
 
     function makeActive(me) {
+        //console.log("makective running: ");
+        //console.log(me);
         // uses global var "url"
         var meep = elemNumber(me, bear.numberOfElements);
-        if ( me !== undefined ) {
+        //console.log('meep = ' + meep);
+        if ( me ) {
             clearActive(elements, bear, bear.numberOfElements);
-            elements[meep].classList.add("active");
+            me.classList.add("active");
             changeClass.add(bear, meep, "active");
-            //bear[meep].classes.push("active");
-            var id = elements[meep].getAttribute("id");
+            var id = me.getAttribute("id");
+            //console.log(id);
             if ( id !== null ) {
                 window.location.replace(url + "#" + id);
             }
-            elements[meep].scrollIntoView();
+            me.scrollIntoView();
         }
     }
 
@@ -587,12 +594,12 @@
         while ( --i ) {
             index = oneOf("active", ref[i].classes);
             if ( index > -1 ) {
-                console.log('found active elements:');
-                console.log(ref[i].tag);
-                console.log("removing active state from:");
-                console.log(elements[i]);
+                //console.log('found active elements:');
+                //console.log(ref[i].tag);
+                //console.log("removing active state from:");
+                //console.log(elements[i]);
                 array[i].classList.remove("active");
-                ref[i].classes.splice(index,1);
+                changeClass.remove(ref, i, "active");
             }
         }
     }
@@ -629,13 +636,13 @@
 
             tempBear.tag = source[sourceLen].tagName;
             tempBear.classes = source[sourceLen].classList.toString().split(' ');
-            // source[sourceLen].classList.toString() !== "" ? console.log(source[sourceLen].tagName + ', ' + source[sourceLen].classList.toString().split(' ')) : 0 ;
+            // source[sourceLen].classList.toString() !== "" ? //console.log(source[sourceLen].tagName + ', ' + source[sourceLen].classList.toString().split(' ')) : 0 ;
 
         }
         var getEnd = new Date();
 
         // end `buildABear` definition
-        console.log('bear build with: ' + bear.numberOfElements + ' elements');
+        //console.log('bear build with: ' + bear.numberOfElements + ' elements');
         return bear;
     }
 
@@ -656,7 +663,7 @@
     function oneOf(thing, array) {
         for ( var i = 0; i < array.length; i++ ) {
             if ( thing === array[i] ) {
-                console.log(thing + ' is part of ' + array);
+//                //console.log(thing + ' is part of ' + array);
                 return i;
             }
         }
