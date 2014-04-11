@@ -148,7 +148,7 @@
         case keyAll :
             var active = activeIndex(bear);
             if ( isHeaderTag(bear[active].tag) ) {
-                toggleHandler(document.getElementsByTagName(bear[active].tag));
+                toggleSame(bear, active);
             }
             break;
             // if they pressed 'j' then move down one:
@@ -193,13 +193,13 @@
             // "f".  This is more a work-around than an actual solution,
             // obvs):
         case keyExpand :
-            while ( anythingHidden() ) {
-                var hell = bear.numberOfElements;
-                while ( --hell ) {
-                    if ( oneOf("collapsed", bear[hell].classes) !== -1 ) {
-                        toggleHandler(elements[hell]);
-                    }
+            var index = 0;
+            var anything;
+            while ( index < bear.numberOfElements ) {
+                if ( oneOf("collapsed", bear[index].classes) > -1 ) {
+                    toggleMe(bear, index);
                 }
+                index++;
             }
             break;
             // press "s" to change the theme
@@ -313,13 +313,13 @@
         // IF THE HEADER IS COLLAPSED, WE EXPAND //
         ///////////////////////////////////////////
         var index = oneOf("collapsed", bear[elementIndex].classes);
-        console.log(elements[elementIndex]);
+//        console.log(elements[elementIndex]);
         if ( index > -1 ) {
             toggleCollapse(elements[elementIndex]);
             changeClass.remove(bear, elementIndex, "collapsed");
             //console.log(bear[elementIndex].classes);
-            console.log('expanding mode go');
-            console.log(bear[elementIndex].classes);
+            //console.log('expanding mode go');
+            //console.log(bear[elementIndex].classes);
             // starting a new counter to go through the elements
             // array and figure out what needs to be unhidden and
             // what headers need to lose the "collapsed" class:
@@ -366,9 +366,9 @@
         ////////////////////////////////////////////////////////
         else {
             toggleCollapse(elements[elementIndex]);
-            console.log('collapsing mode go');
+//            console.log('collapsing mode go');
             changeClass.add(bear, elementIndex, "collapsed");
-            console.log(bear[elementIndex].classes);
+  //          console.log(bear[elementIndex].classes);
             var h = elementIndex + 1;
             while ( h !== stop && h < bear.numberOfElements ) {
                 elements[h].classList.add("hidden");
@@ -515,16 +515,6 @@
                 //console.log(elements[i]);
                 return i;
             }
-        }
-    }
-
-    function anythingHidden() {
-        var anything = bear.numberOfElements;
-        while ( --anything ) {
-            if ( oneOf("collapsed", bear[anything].classes) > -1 ) {
-                    anything++;
-            }
-            return ( anything > 0 ? true : false );
         }
     }
 
