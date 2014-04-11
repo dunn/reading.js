@@ -256,7 +256,7 @@
 
         // if something was clicked, we need to figure out what:
         else {
-            clearActive(elements);
+            clearActive(elements, bear, bear.numberOfElements);
             // if it was the header that was clicked, just return that
             // element:
             if ( isHeaderTag(event.target.tagName) ) {
@@ -389,6 +389,7 @@
 
         toggleMe(elements[b]);
 
+        console.log('clicked: ' + activeHeaderName);
         // first walk up, toggling all at the same level
         var c = b - 1;
         while ( c &&
@@ -399,10 +400,12 @@
                 if ( !activeIsCollapsed &&
                      !isOneOf("collapsed", bear[c].classes) &&
                      curNum === activeNum ) {
+                         console.log("toggling a: " + curNum);
                          toggleMe(elements[c]);
                      }
                 else if ( isOneOf("collapsed", bear[c].classes) &&
                           curNum === activeNum ) {
+                              console.log("toggling a: " + curNum);
                               toggleMe(elements[c]);
                           }
             }
@@ -418,10 +421,14 @@
                 if ( !activeIsCollapsed &&
                      !isOneOf("collapsed", bear[d].classes) &&
                      curNum2 === activeNum ) {
+                         console.log("toggling a: " + curNum2);
                          toggleMe(elements[d]);
                      }
+
+
                 else if (isOneOf("collapsed", bear[d].classes) &&
                          curNum2 === activeNum ) {
+                             console.log("toggling a: " + curNum2);
                              toggleMe(elements[d]);
                          }
             }
@@ -541,7 +548,7 @@
     function makeActive(me) {
         // uses global var "url"
         if ( me !== undefined ) {
-            clearActive(elements);
+            clearActive(elements, bear, bear.numberOfElements);
             me.classList.add("active");
             var id = me.getAttribute("id");
             if ( id !== null ) {
@@ -551,10 +558,11 @@
         }
     }
 
-    function clearActive(array) {
-        var i = array.length;
+    function clearActive(array, ref, i) {
         while ( --i ) {
-            array[i].classList.remove("active");
+            if ( isOneOf("active", ref[i].classes) ) {
+                array[i].classList.remove("active");
+            }
         }
     }
 
