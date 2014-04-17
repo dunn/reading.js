@@ -2,6 +2,75 @@
 
 var utils = require('./utils.js');
 
+utils.elemNumber = function(elements, element, i) {
+    while ( --i ) {
+        if (elements[i] === element) {
+            return i;
+        }
+    }
+    return undefined;
+};
+
+// this function finds the active header, then returns the next header
+// that's at the same level or higher (i.e., if the active header is
+// h3, it will return the next h3, h2, or h1---whichever comes first):
+utils.compareHeaders = function(bear, start, headerNum) {
+//        var compStart = new Date();
+    var compEnd;
+
+    while ( start++ < bear.numberOfElements ) {
+        // look at each header after the targetHeader; stop and return
+        // that header if it's the same size or bigger than the
+        // targetHeader.  Using '<' not '>' because smaller is bigger
+        // (h1 < h6):
+        if ( bear[start] &&
+             this.isHeaderTag(bear[start].tag) &&
+             (bear[start].tag.slice(1) <= headerNum) ) {
+            // return the match number
+            return start;
+        }
+    }
+    // if we reach this point it means we've hit the end of the document
+    return bear.numberOfElements;
+
+    // end `compareHeaders` definition
+};
+
+utils.toggleCollapse = function(where) {
+    where.classList.toggle("collapsed");
+};
+
+utils.changeClass = {
+    add: function(bear, i, classname) {
+        if ( utils.oneOf(classname, bear[i].classes) < 0) {
+            bear[i].classes.push(classname);
+            //console.log(bear[i] + ' now has ' + bear[i].classes);
+        }
+    },
+    remove: function(bear, i, classname) {
+        var index = utils.oneOf(classname, bear[i].classes);
+        if ( index > -1 ) {
+            bear[i].classes.splice(index,1);
+            //console.log(bear[i] + ' now has ' + bear[i].classes);
+        }
+    }
+};
+
+utils.clearActive = function(array, ref, i) {
+    var index;
+    while ( --i ) {
+        index = this.oneOf("active", ref[i].classes);
+        if ( index > -1 ) {
+            //console.log('found active elements:');
+            //console.log(ref[i].tag);
+            //console.log("removing active state from:");
+            //console.log(elements[i]);
+            array[i].classList.remove("active");
+            this.changeClass.remove(ref, i, "active");
+        }
+    }
+};
+
 var toggle = {
     // toggleHandler checks what's being toggled, and in turn calls
     // toggleMe or toggleSame:
@@ -65,8 +134,8 @@ var toggle = {
         //console.log("toggleHandler time: " + (handlerEnd - handlerStart));
     },
 
-    same: function (bear, b) {
-        //console.log("toggleSame commencing");
+    same: function (elements, bear, b) {
+        console.log("toggleSame commencing");
 //        var sameStart = new Date();
 
         var activeHeaderName = bear[b].tag;
@@ -118,8 +187,6 @@ var toggle = {
                          this.me(elements, bear, d);
                          //changeClass.remove(bear, d, "collapsed");
                      }
-
-
                 else if ( (utils.oneOf("collapsed", bear[d].classes) > -1 ) &&
                          curNum2 === activeNum ) {
                              this.me(elements, bear, d);
@@ -130,19 +197,19 @@ var toggle = {
         }
         // end `toggleSame` definition
 //        var sameEnd = new Date();
-        //console.log("toggleSame ending");
+        console.log("toggleSame ending");
         //console.log("toggleSame time: " + (sameEnd - sameStart));
     },
 
     me: function (elements, bear, target) {
-        //console.log("toggleMe commencing");
+        console.log("toggleMe commencing");
 //        var meStart = new Date();
 
         var elementIndex = target;
 
         // get the number of the header (h1 => 1, h2 => 2, etc)
         var headerNum = bear[elementIndex].tag.slice(1);
-        //console.log('toggling a H' + headerNum);
+        console.log('toggling a H' + headerNum);
 
         // this variable holds the next header of greater or equal
         // value; it's used to determine how much stuff gets
@@ -220,7 +287,7 @@ var toggle = {
 
         // end `toggleMe` definition
 //        var meEnd = new Date();
-        //console.log("toggleMe ending");
+        console.log("toggleMe ending");
         //console.log("toggleMe() time: " + (meEnd - meStart));
     }
 };

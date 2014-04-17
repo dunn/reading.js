@@ -2,9 +2,6 @@
 (function() {
     "use strict";
 
-    var build = require('./bear.js');
-    var utils = require('./utils.js');
-    var toggle = require('./toggle.js');
     var listeners = require('./listeners.js');
 
     var elements;

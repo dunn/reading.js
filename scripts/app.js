@@ -85,7 +85,14 @@ var listeners = function(elements, bear) {
             if ( utils.isHeaderTag(bear[pointer].tag) ) {
                 elements[pointer].innerHTML += headerLinks;
                 // and add an event listener:
-                addListener(elements[pointer], "click", toggle.handler(elements, bear, elements[pointer]));
+
+                // we have to set elements[pointer] to a variable in
+                // order to pass it to the listener function
+                var listen = elements[pointer];
+                addListener(elements[pointer], "click", function(listen) {
+                    //console.log(elements[pointer]);
+                    toggle.handler(elements, bear, listen);
+                });
             }
             pointer--;
             // bear[pointer] = bear[pointer];
@@ -129,7 +136,6 @@ var listeners = function(elements, bear) {
                 utils.makeActive(elements, bear, startAt);
             }
         }
-
         // now add the infobox at the top:
         var helpBoxText = "<p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><aside><h3>Keyboard shortcuts</h3><ul><li><span class=\"key\">" + String.fromCharCode(keys.next) + " / " + String.fromCharCode(keys.prev) + "</span> next/previous</li><li><span class=\"key\">enter</span> toggle active header</li><li><span class=\"key\">" + String.fromCharCode(keys.nextUp) + " / " + String.fromCharCode(keys.prevUp) + "</span> next/previous header (one level up)</li><li><span class=\"key\">" + String.fromCharCode(keys.first) + " / " + String.fromCharCode(keys.last) + "</span> start/end of document</li><li><span class=\"key\">" + String.fromCharCode(keys.all) + "</span> toggle everything in this section</li><li><span class=\"key\">" + String.fromCharCode(keys.expand) + "</span> expand everything (do this before you search)</li><li><span class=\"key\">" + String.fromCharCode(keys.theme) + "</span> change theme</li></ul></aside>";
 
@@ -167,6 +173,45 @@ var listeners = function(elements, bear) {
 
         var scrollSkip = [ "DIV", "HEADER", "HR" ];
 
+        var indexRelativeToActive = {
+            scrollSkip: [ "DIV", "HEADER", "HR" ],
+            down: function(bear, num) {
+                var i = utils.activeIndex(bear);
+                i = i + num;
+                while ( bear[i] &&
+                        ( (utils.oneOf(bear[i].tag, scrollSkip) > -1) ||
+                          (utils.oneOf("hidden", bear[i].classes) > -1) ) ) {
+                    i++;
+                }
+                return ( (i < bear.numberOfElements) ? i : utils.activeIndex(bear));
+            },
+            up: function(bear, num) {
+                var i = utils.activeIndex(bear);
+                i = i - num;
+                while ( bear[i] &&
+                        ( (utils.oneOf(bear[i].tag, scrollSkip) > -1) ||
+                          (utils.oneOf("hidden", bear[i].classes) > -1) ) ) {
+                    i--;
+                }
+                // i > 0 so we can't go up beyond the first header:
+                return ( i > 0 ? i : utils.activeIndex(bear));
+            }
+        };
+
+        var headerOneLevelUp = function(bear, direction) {
+            var down = direction === "down";
+            var k = utils.activeIndex(bear);
+            for ( var v = (down ? (k+1) : (k-1)); (down ? v < bear.numberOfElements: v >= 0); (down ? v++ : v--) ) {
+                if ( utils.isHeaderTag(bear[v].tag) ) {
+                    if ( (bear[k].tag.slice(1) > bear[v].tag.slice(1)) ||
+                         !utils.isHeaderTag(bear[k].tag) ) {
+                        return v;
+                    }
+                }
+                break;
+            }
+        };
+
         switch (theKey) {
             // if they hit return/enter, toggle the active section:
         case 13 :
@@ -182,11 +227,11 @@ var listeners = function(elements, bear) {
             break;
             // if they pressed 'j' then move down one:
         case keys.next :
-            utils.makeActive(elements, bear, elements[utils.indexRelativeToActive.down(bear, 1)]);
+            utils.makeActive(elements, bear, elements[indexRelativeToActive.down(bear, 1)]);
             break;
             // if they press 'k' go up:
         case keys.prev :
-            utils.makeActive(elements, bear, elements[utils.indexRelativeToActive.up(bear, 1)]);
+            utils.makeActive(elements, bear, elements[indexRelativeToActive.up(bear, 1)]);
             break;
             // if they press "u", go to the first visible element:
         case keys.first :
@@ -210,11 +255,11 @@ var listeners = function(elements, bear) {
             break;
             // if they press "i", go to the previous header that's a level up:
         case keys.prevUp :
-            utils.makeActive(elements, bear, elements[utils.headerOneLevelUp(bear, "up")]);
+            utils.makeActive(elements, bear, elements[headerOneLevelUp(bear, "up")]);
             break;
             // if they press "o" go to the next header that's a level up:
         case keys.nextUp :
-            utils.makeActive(elements, bear, elements[utils.headerOneLevelUp(bear, "down")]);
+            utils.makeActive(elements, bear, elements[headerOneLevelUp(bear, "down")]);
             break;
             // if they press "f", expand everything
             // (this is a useful feature I guess, but it also has to be
@@ -265,9 +310,6 @@ module.exports = listeners;
 (function() {
     "use strict";
 
-    var build = require('./bear.js');
-    var utils = require('./utils.js');
-    var toggle = require('./toggle.js');
     var listeners = require('./listeners.js');
 
     var elements;
@@ -278,10 +320,79 @@ module.exports = listeners;
     // end
 })();
 
-},{"./bear.js":1,"./listeners.js":2,"./toggle.js":4,"./utils.js":5}],4:[function(require,module,exports){
+},{"./listeners.js":2}],4:[function(require,module,exports){
 "use strict";
 
 var utils = require('./utils.js');
+
+utils.elemNumber = function(elements, element, i) {
+    while ( --i ) {
+        if (elements[i] === element) {
+            return i;
+        }
+    }
+    return undefined;
+};
+
+// this function finds the active header, then returns the next header
+// that's at the same level or higher (i.e., if the active header is
+// h3, it will return the next h3, h2, or h1---whichever comes first):
+utils.compareHeaders = function(bear, start, headerNum) {
+//        var compStart = new Date();
+    var compEnd;
+
+    while ( start++ < bear.numberOfElements ) {
+        // look at each header after the targetHeader; stop and return
+        // that header if it's the same size or bigger than the
+        // targetHeader.  Using '<' not '>' because smaller is bigger
+        // (h1 < h6):
+        if ( bear[start] &&
+             this.isHeaderTag(bear[start].tag) &&
+             (bear[start].tag.slice(1) <= headerNum) ) {
+            // return the match number
+            return start;
+        }
+    }
+    // if we reach this point it means we've hit the end of the document
+    return bear.numberOfElements;
+
+    // end `compareHeaders` definition
+};
+
+utils.toggleCollapse = function(where) {
+    where.classList.toggle("collapsed");
+};
+
+utils.changeClass = {
+    add: function(bear, i, classname) {
+        if ( utils.oneOf(classname, bear[i].classes) < 0) {
+            bear[i].classes.push(classname);
+            //console.log(bear[i] + ' now has ' + bear[i].classes);
+        }
+    },
+    remove: function(bear, i, classname) {
+        var index = utils.oneOf(classname, bear[i].classes);
+        if ( index > -1 ) {
+            bear[i].classes.splice(index,1);
+            //console.log(bear[i] + ' now has ' + bear[i].classes);
+        }
+    }
+};
+
+utils.clearActive = function(array, ref, i) {
+    var index;
+    while ( --i ) {
+        index = this.oneOf("active", ref[i].classes);
+        if ( index > -1 ) {
+            //console.log('found active elements:');
+            //console.log(ref[i].tag);
+            //console.log("removing active state from:");
+            //console.log(elements[i]);
+            array[i].classList.remove("active");
+            this.changeClass.remove(ref, i, "active");
+        }
+    }
+};
 
 var toggle = {
     // toggleHandler checks what's being toggled, and in turn calls
@@ -346,8 +457,8 @@ var toggle = {
         //console.log("toggleHandler time: " + (handlerEnd - handlerStart));
     },
 
-    same: function (bear, b) {
-        //console.log("toggleSame commencing");
+    same: function (elements, bear, b) {
+        console.log("toggleSame commencing");
 //        var sameStart = new Date();
 
         var activeHeaderName = bear[b].tag;
@@ -399,8 +510,6 @@ var toggle = {
                          this.me(elements, bear, d);
                          //changeClass.remove(bear, d, "collapsed");
                      }
-
-
                 else if ( (utils.oneOf("collapsed", bear[d].classes) > -1 ) &&
                          curNum2 === activeNum ) {
                              this.me(elements, bear, d);
@@ -411,19 +520,19 @@ var toggle = {
         }
         // end `toggleSame` definition
 //        var sameEnd = new Date();
-        //console.log("toggleSame ending");
+        console.log("toggleSame ending");
         //console.log("toggleSame time: " + (sameEnd - sameStart));
     },
 
     me: function (elements, bear, target) {
-        //console.log("toggleMe commencing");
+        console.log("toggleMe commencing");
 //        var meStart = new Date();
 
         var elementIndex = target;
 
         // get the number of the header (h1 => 1, h2 => 2, etc)
         var headerNum = bear[elementIndex].tag.slice(1);
-        //console.log('toggling a H' + headerNum);
+        console.log('toggling a H' + headerNum);
 
         // this variable holds the next header of greater or equal
         // value; it's used to determine how much stuff gets
@@ -501,7 +610,7 @@ var toggle = {
 
         // end `toggleMe` definition
 //        var meEnd = new Date();
-        //console.log("toggleMe ending");
+        console.log("toggleMe ending");
         //console.log("toggleMe() time: " + (meEnd - meStart));
     }
 };
@@ -512,15 +621,6 @@ module.exports = toggle;
 "use strict";
 
 var utils = {};
-
-utils.elemNumber = function(elements, element, i) {
-    while ( --i ) {
-        if (elements[i] === element) {
-            return i;
-        }
-    }
-    return undefined;
-};
 
 utils.isHeaderTag = function(tag) {
     var t = tag;
@@ -536,52 +636,6 @@ utils.oneOf = function(thing, array) {
     return -1;
 };
 
-// this function finds the active header, then returns the next header
-// that's at the same level or higher (i.e., if the active header is
-// h3, it will return the next h3, h2, or h1---whichever comes first):
-utils.compareHeaders = function(bear, start, headerNum) {
-//        var compStart = new Date();
-    var compEnd;
-
-    while ( start++ < bear.numberOfElements ) {
-        // look at each header after the targetHeader; stop and return
-        // that header if it's the same size or bigger than the
-        // targetHeader.  Using '<' not '>' because smaller is bigger
-        // (h1 < h6):
-        if ( bear[start] &&
-             this.isHeaderTag(bear[start].tag) &&
-             (bear[start].tag.slice(1) <= headerNum) ) {
-            // return the match number
-            return start;
-        }
-    }
-    // if we reach this point it means we've hit the end of the document
-    return bear.numberOfElements;
-
-    // end `compareHeaders` definition
-};
-
-utils.toggleCollapse = function(where) {
-    where.classList.toggle("collapsed");
-};
-
-utils.changeClass = {
-    add: function(bear, i, classname) {
-        if ( utils.oneOf(classname, bear[i].classes) < 0) {
-            bear[i].classes.push(classname);
-            //                console.log(bear[i] + ' now has ' + bear[i].classes);
-        }
-    },
-    remove: function(bear, i, classname) {
-        var index = utils.oneOf(classname, bear[i].classes);
-        if ( index > -1 ) {
-            bear[i].classes.splice(index,1);
-//                console.log(bear[i] + ' now has ' + bear[i].classes);
-        }
-    }
-};
-
-
 // what is the last element that has `class="active"`?
 utils.activeIndex = function(ref) {
     var i = ref.numberOfElements;
@@ -592,49 +646,6 @@ utils.activeIndex = function(ref) {
             //console.log(elements[i]);
             return i;
         }
-    }
-};
-
-/////////////////////////////
-// ACTIVE/SCROLL FUNCTIONS //
-/////////////////////////////
-
-utils.indexRelativeToActive = {
-    scrollSkip: [ "DIV", "HEADER", "HR" ],
-    down: function(bear, num) {
-        var i = utils.activeIndex(bear);
-            i = i + num;
-            while ( bear[i] &&
-                    ( (utils.oneOf(bear[i].tag, this.scrollSkip) > -1) ||
-                      (utils.oneOf("hidden", bear[i].classes) > -1) ) ) {
-                i++;
-            }
-            return ( (i < bear.numberOfElements) ? i : utils.activeIndex(bear));
-        },
-    up: function(bear, num) {
-        var i = utils.activeIndex(bear);
-        i = i - num;
-        while ( bear[i] &&
-                ( (utils.oneOf(bear[i].tag, this.scrollSkip) > -1) ||
-                  (utils.oneOf("hidden", bear[i].classes) > -1) ) ) {
-            i--;
-        }
-        // i > 0 so we can't go up beyond the first header:
-        return ( i > 0 ? i : utils.activeIndex(bear));
-    }
-};
-
-utils.headerOneLevelUp = function(bear, direction) {
-    var down = direction === "down";
-    var k = this.activeIndex(bear);
-    for ( var v = (down ? (k+1) : (k-1)); (down ? v < bear.numberOfElements: v >= 0); (down ? v++ : v--) ) {
-        if ( this.isHeaderTag(bear[v].tag) ) {
-            if ( (bear[k].tag.slice(1) > bear[v].tag.slice(1)) ||
-                 !this.isHeaderTag(bear[k].tag) ) {
-                return v;
-            }
-        }
-        break;
     }
 };
 
@@ -658,21 +669,6 @@ utils.makeActive = function(elements, bear, me) {
             window.location.replace(url + "#" + id);
         }
         me.scrollIntoView();
-    }
-};
-
-utils.clearActive = function(array, ref, i) {
-    var index;
-    while ( --i ) {
-        index = this.oneOf("active", ref[i].classes);
-        if ( index > -1 ) {
-            //console.log('found active elements:');
-            //console.log(ref[i].tag);
-            //console.log("removing active state from:");
-            //console.log(elements[i]);
-            array[i].classList.remove("active");
-            this.changeClass.remove(ref, i, "active");
-        }
     }
 };
 

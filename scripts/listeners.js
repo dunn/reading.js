@@ -57,7 +57,14 @@ var listeners = function(elements, bear) {
             if ( utils.isHeaderTag(bear[pointer].tag) ) {
                 elements[pointer].innerHTML += headerLinks;
                 // and add an event listener:
-                addListener(elements[pointer], "click", toggle.handler(elements, bear, elements[pointer]));
+
+                // we have to set elements[pointer] to a variable in
+                // order to pass it to the listener function
+                var listen = elements[pointer];
+                addListener(elements[pointer], "click", function(listen) {
+                    //console.log(elements[pointer]);
+                    toggle.handler(elements, bear, listen);
+                });
             }
             pointer--;
             // bear[pointer] = bear[pointer];
@@ -101,7 +108,6 @@ var listeners = function(elements, bear) {
                 utils.makeActive(elements, bear, startAt);
             }
         }
-
         // now add the infobox at the top:
         var helpBoxText = "<p><a href=\"#" + startId + "\" title=\"Skip to content\">Skip to content</a></p><aside><h3>Keyboard shortcuts</h3><ul><li><span class=\"key\">" + String.fromCharCode(keys.next) + " / " + String.fromCharCode(keys.prev) + "</span> next/previous</li><li><span class=\"key\">enter</span> toggle active header</li><li><span class=\"key\">" + String.fromCharCode(keys.nextUp) + " / " + String.fromCharCode(keys.prevUp) + "</span> next/previous header (one level up)</li><li><span class=\"key\">" + String.fromCharCode(keys.first) + " / " + String.fromCharCode(keys.last) + "</span> start/end of document</li><li><span class=\"key\">" + String.fromCharCode(keys.all) + "</span> toggle everything in this section</li><li><span class=\"key\">" + String.fromCharCode(keys.expand) + "</span> expand everything (do this before you search)</li><li><span class=\"key\">" + String.fromCharCode(keys.theme) + "</span> change theme</li></ul></aside>";
 
@@ -139,6 +145,45 @@ var listeners = function(elements, bear) {
 
         var scrollSkip = [ "DIV", "HEADER", "HR" ];
 
+        var indexRelativeToActive = {
+            scrollSkip: [ "DIV", "HEADER", "HR" ],
+            down: function(bear, num) {
+                var i = utils.activeIndex(bear);
+                i = i + num;
+                while ( bear[i] &&
+                        ( (utils.oneOf(bear[i].tag, scrollSkip) > -1) ||
+                          (utils.oneOf("hidden", bear[i].classes) > -1) ) ) {
+                    i++;
+                }
+                return ( (i < bear.numberOfElements) ? i : utils.activeIndex(bear));
+            },
+            up: function(bear, num) {
+                var i = utils.activeIndex(bear);
+                i = i - num;
+                while ( bear[i] &&
+                        ( (utils.oneOf(bear[i].tag, scrollSkip) > -1) ||
+                          (utils.oneOf("hidden", bear[i].classes) > -1) ) ) {
+                    i--;
+                }
+                // i > 0 so we can't go up beyond the first header:
+                return ( i > 0 ? i : utils.activeIndex(bear));
+            }
+        };
+
+        var headerOneLevelUp = function(bear, direction) {
+            var down = direction === "down";
+            var k = utils.activeIndex(bear);
+            for ( var v = (down ? (k+1) : (k-1)); (down ? v < bear.numberOfElements: v >= 0); (down ? v++ : v--) ) {
+                if ( utils.isHeaderTag(bear[v].tag) ) {
+                    if ( (bear[k].tag.slice(1) > bear[v].tag.slice(1)) ||
+                         !utils.isHeaderTag(bear[k].tag) ) {
+                        return v;
+                    }
+                }
+                break;
+            }
+        };
+
         switch (theKey) {
             // if they hit return/enter, toggle the active section:
         case 13 :
@@ -154,11 +199,11 @@ var listeners = function(elements, bear) {
             break;
             // if they pressed 'j' then move down one:
         case keys.next :
-            utils.makeActive(elements, bear, elements[utils.indexRelativeToActive.down(bear, 1)]);
+            utils.makeActive(elements, bear, elements[indexRelativeToActive.down(bear, 1)]);
             break;
             // if they press 'k' go up:
         case keys.prev :
-            utils.makeActive(elements, bear, elements[utils.indexRelativeToActive.up(bear, 1)]);
+            utils.makeActive(elements, bear, elements[indexRelativeToActive.up(bear, 1)]);
             break;
             // if they press "u", go to the first visible element:
         case keys.first :
@@ -182,11 +227,11 @@ var listeners = function(elements, bear) {
             break;
             // if they press "i", go to the previous header that's a level up:
         case keys.prevUp :
-            utils.makeActive(elements, bear, elements[utils.headerOneLevelUp(bear, "up")]);
+            utils.makeActive(elements, bear, elements[headerOneLevelUp(bear, "up")]);
             break;
             // if they press "o" go to the next header that's a level up:
         case keys.nextUp :
-            utils.makeActive(elements, bear, elements[utils.headerOneLevelUp(bear, "down")]);
+            utils.makeActive(elements, bear, elements[headerOneLevelUp(bear, "down")]);
             break;
             // if they press "f", expand everything
             // (this is a useful feature I guess, but it also has to be
