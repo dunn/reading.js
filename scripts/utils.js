@@ -18,6 +18,7 @@ utils.oneOf = function(thing, array) {
 
 // what is the last element that has `class="active"`?
 utils.activeIndex = function(ref) {
+//    console.log(ref);
     var i = ref.numberOfElements;
     while ( --i ) {
         if ( this.oneOf("active", ref[i].classes) > -1 ) {

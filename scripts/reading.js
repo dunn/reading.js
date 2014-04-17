@@ -7,7 +7,7 @@
     var elements;
     var bear;
 
-    listeners(elements, bear);
-
+    listeners.onload(elements, bear);
+    listeners.onpress(elements, bear);
     // end
 })();

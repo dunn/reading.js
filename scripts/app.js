@@ -61,8 +61,9 @@ function addListener(element, type, response) {
     }
 }
 
-var listeners = function(elements, bear) {
-    addListener(window, "load", function() {
+var listeners = {
+    onload: function(elements, bear) {
+        addListener(window, "load", function(){
         // do this stuff when the `window.load` event fires:
 
         // unicode symbols for button icons
@@ -74,9 +75,9 @@ var listeners = function(elements, bear) {
         // default to the first theme
         document.documentElement.classList.add(themes[0]);
 
-        var elements = document.body.children;
+        elements = document.body.children;
 
-        var bear = build();
+        bear = build();
 
         // append some cute buttons:
         var pointer = bear.numberOfElements - 1;
@@ -158,13 +159,20 @@ var listeners = function(elements, bear) {
         bear = build();
 
         // end window.load event listener
-    });
+    });},
 
     //////////////
     // KEYPRESS //
     //////////////
 
-    addListener(window, "keypress", function(key) {
+    onpress: function(elements, bear) {
+        if ( !bear || !elements ) {
+            elements = document.body.children;
+            bear = build();
+        }
+        addListener(window, "keypress", function(key) {
+        //console.log(elements);
+        //console.log(bear);
         // do this stuff when a key is pressed:
 
         // http://stackoverflow.com/a/5420482
@@ -176,6 +184,7 @@ var listeners = function(elements, bear) {
         var indexRelativeToActive = {
             scrollSkip: [ "DIV", "HEADER", "HR" ],
             down: function(bear, num) {
+                //console.log(bear);
                 var i = utils.activeIndex(bear);
                 i = i + num;
                 while ( bear[i] &&
@@ -300,7 +309,7 @@ var listeners = function(elements, bear) {
         }
         bear = build();
         // end window.keypress event listener
-    });
+    });}
 };
 
 module.exports = listeners;
@@ -315,8 +324,8 @@ module.exports = listeners;
     var elements;
     var bear;
 
-    listeners(elements, bear);
-
+    listeners.onload(elements, bear);
+    listeners.onpress(elements, bear);
     // end
 })();
 
@@ -632,6 +641,7 @@ utils.oneOf = function(thing, array) {
 
 // what is the last element that has `class="active"`?
 utils.activeIndex = function(ref) {
+//    console.log(ref);
     var i = ref.numberOfElements;
     while ( --i ) {
         if ( this.oneOf("active", ref[i].classes) > -1 ) {
