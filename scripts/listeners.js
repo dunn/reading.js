@@ -151,10 +151,8 @@ var listeners = {
         key = key || window.event;
         var theKey = key.which || key.keyCode;
 
-        var scrollSkip = [ "DIV", "HEADER", "HR" ];
-
+        var scrollSkip =  [ "DIV", "HEADER", "HR", "SCRIPT" ];
         var indexRelativeToActive = {
-            scrollSkip: [ "DIV", "HEADER", "HR" ],
             down: function(bear, num) {
                 //console.log(bear);
                 var i = utils.activeIndex(bear);
@@ -208,6 +206,7 @@ var listeners = {
             break;
             // if they pressed 'j' then move down one:
         case keys.next :
+            console.log(elements[indexRelativeToActive.down(bear, 1)]);
             utils.makeActive(elements, bear, elements[indexRelativeToActive.down(bear, 1)]);
             break;
             // if they press 'k' go up:
@@ -218,7 +217,7 @@ var listeners = {
         case keys.first :
             var y = 1;
             while ( y++ < bear.numberOfElements ) {
-                if ( utils.oneOf(bear[y-2].tag, scrollSkip) === -1 ) {
+                if ( utils.oneOf(bear[y-2].tag, scrollSkip) < 0 ) {
                     utils.makeActive(elements, bear, elements[y-2]);
                     break;
                 }
@@ -228,7 +227,8 @@ var listeners = {
         case keys.last :
             var z = bear.numberOfElements;
             while ( --z ) {
-                if ( utils.oneOf(bear[z].tag, scrollSkip) === -1 ) {
+                //console.log(scrollSkip);
+                if ( utils.oneOf(bear[z].tag, scrollSkip) < 0 ) {
                     utils.makeActive(elements, bear, elements[z]);
                     break;
                 }
