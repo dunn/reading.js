@@ -135,19 +135,20 @@ var toggle = {
     },
 
     same: function (elements, bear, b) {
-        console.log("toggleSame commencing");
+        //console.log("toggleSame commencing");
 //        var sameStart = new Date();
 
         var activeHeaderName = bear[b].tag;
-        var activeIsCollapsed = utils.oneOf("collapsed", bear[b].classes);
+        var activeIsCollapsed = utils.oneOf("collapsed", bear[b].classes) > -1;
+        //console.log(activeIsCollapsed);
         var activeNum = activeHeaderName.slice(1);
 
-        if ( activeIsCollapsed ) {
-            utils.changeClass.remove(bear, b, "collapsed");
-        }
-        else {
-            utils.changeClass.add(bear, b, "collapsed");
-        }
+        // if ( activeIsCollapsed ) {
+        //     utils.changeClass.remove(bear, b, "collapsed");
+        // }
+        // else {
+        //     utils.changeClass.add(bear, b, "collapsed");
+        // }
         this.me(elements, bear, b);
 
         // first walk up, toggling all at the same level
@@ -156,21 +157,16 @@ var toggle = {
                 (!utils.isHeaderTag(bear[c].tag) ||
                  (bear[c].tag.slice(1) >= activeNum)) ) {
             var curNum = bear[c].tag.slice(1);
-            if ( utils.isHeaderTag(bear[c].tag) ) {
-                if ( activeIsCollapsed &&
-                     (utils.oneOf("collapsed", bear[c].classes) < 0) &&
-                     curNum === activeNum ) {
-                         //console.log("toggling a: " + curNum);
-                         this.me(elements, bear, c);
-                         //changeClass.remove(bear, c, "collapsed");
-                     }
-                // collapsing?
-                else if ( (utils.oneOf("collapsed", bear[c].classes) > -1) &&
-                          curNum === activeNum ) {
-                              //console.log("toggling a: " + curNum);
-                              this.me(elements, bear, c);
-                              //changeClass.add(bear, c, "collapsed");
-                          }
+            if ( utils.isHeaderTag(bear[c].tag) && curNum === activeNum ) {
+                // following says: if (a) we clicked a header to
+                // expand it and the header we've reached in our walk
+                // is collapsed; or (b) we clicked a header to
+                // collapse and the header we've reached is not
+                // collapsed, THEN toggle
+                if ( (activeIsCollapsed && (utils.oneOf("collapsed", bear[c].classes) > -1)) ||
+                     (!activeIsCollapsed && (utils.oneOf("collapsed", bear[c].classes) < 0)) ) {
+                    this.me(elements, bear, c);
+                }
             }
             c--;
         }
@@ -180,36 +176,34 @@ var toggle = {
                 (!utils.isHeaderTag(bear[d].tag) ||
                  (bear[d].tag.slice(1) >= activeNum)) ) {
             var curNum2 = bear[d].tag.slice(1);
-            if ( utils.isHeaderTag(bear[d].tag) ) {
-                if ( activeIsCollapsed &&
-                     (utils.oneOf("collapsed", bear[d].classes < 0) ) &&
-                     curNum2 === activeNum ) {
-                         this.me(elements, bear, d);
-                         //changeClass.remove(bear, d, "collapsed");
-                     }
-                else if ( (utils.oneOf("collapsed", bear[d].classes) > -1 ) &&
-                         curNum2 === activeNum ) {
-                             this.me(elements, bear, d);
-                             //changeClass.add(bear, d, "collapsed");
-                         }
+            if ( utils.isHeaderTag(bear[d].tag) && curNum2 === activeNum ) {
+                // following says: if (a) we clicked a header to
+                // expand it and the header we've reached in our walk
+                // is collapsed; or (b) we clicked a header to
+                // collapse and the header we've reached is not
+                // collapsed, THEN toggle
+                if ( (activeIsCollapsed && (utils.oneOf("collapsed", bear[d].classes) > -1)) ||
+                     (!activeIsCollapsed && (utils.oneOf("collapsed", bear[d].classes) < 0)) ) {
+                    this.me(elements, bear, d);
+                }
             }
             d++;
         }
         // end `toggleSame` definition
 //        var sameEnd = new Date();
-        console.log("toggleSame ending");
+        //console.log("toggleSame ending");
         //console.log("toggleSame time: " + (sameEnd - sameStart));
     },
 
     me: function (elements, bear, target) {
-        console.log("toggleMe commencing");
+        //console.log("toggleMe commencing");
 //        var meStart = new Date();
 
         var elementIndex = target;
 
         // get the number of the header (h1 => 1, h2 => 2, etc)
         var headerNum = bear[elementIndex].tag.slice(1);
-        console.log('toggling a H' + headerNum);
+        //console.log('toggling a H' + headerNum);
 
         // this variable holds the next header of greater or equal
         // value; it's used to determine how much stuff gets
@@ -287,7 +281,7 @@ var toggle = {
 
         // end `toggleMe` definition
 //        var meEnd = new Date();
-        console.log("toggleMe ending");
+        //console.log("toggleMe ending");
         //console.log("toggleMe() time: " + (meEnd - meStart));
     }
 };
