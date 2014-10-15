@@ -14,11 +14,11 @@ a well-structured HTML file, they add:
 - **Keyboard shortcuts**
 
 - **Section folding**
-    
+
 - **Three color schemes** (it defaults to a high-contrast mode, but
     try the [Solarized](http://ethanschoonover.com/solarized "Ethan
     Schoonover's project page")-style themes.)
-    
+
 ## Using Reading.js
 
 Feel free to download and modify this project to your heart's content
@@ -59,16 +59,15 @@ is, they are not enclosed in a `<div>` or any other element).
 
 Reading.js just won't work if the header elements in your document are
 differently formatted.  (If you're using pandoc, don't use the
-`--section-divs` option.)  
+`--section-divs` option.)
 
 The `range-method` branch of this project is an older version of the
 script that hid content using JavaScript instead of CSS.  That avoided
 some of the limitations just mentioned, but was much slower.
 
-These limitations exist because I'm a crummy programmer.  But I'm also
-lazy, and I only use Reading.js on HTML files made by pandoc, so I
-probably won't fix this any time soon.  (Another reason for you to
-fork it.)
+These limitations exist because I'm lazy; I also only use Reading.js on
+HTML files made by pandoc, so I probably won't fix this any time soon.
+(Another reason for you to fork it.)
 
 ## Does this work in all browsers?
 
